@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Block 5 – Konnektoren | Claude-Workshop</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #f7f5f0;
+    --header-dark: #2b2b2b;
+    --accent: #4a6fa5;
+    --accent-light: #e8eef7;
+    --accent-mid: #7a9bc8;
+    --text-dark: #1e1e1e;
+    --text-mid: #4a4a4a;
+    --text-light: #7a7a7a;
+    --border: #ddd8cf;
+    --white: #ffffff;
+    --success: #3a7d5a;
+    --success-bg: #edf7f2;
+    --warn: #b5621a;
+    --warn-bg: #fff7ef;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'DM Sans',sans-serif; background:#3a3a3a; display:flex; flex-direction:column; align-items:center; padding:20px; gap:16px; min-height:100vh; }
+  .nav { display:flex; gap:6px; flex-wrap:wrap; justify-content:center; max-width:980px; }
+  .nav button { background:#555; color:#fff; border:none; padding:4px 9px; border-radius:4px; font-family:'DM Sans',sans-serif; font-size:10.5px; cursor:pointer; transition:background 0.2s; white-space:nowrap; }
+  .nav button:hover { background:var(--accent); }
+  .nav button.active { background:var(--accent); }
+
+  .slide { width:960px; max-width:100%; background:var(--cream); border-radius:4px; overflow:hidden; box-shadow:0 8px 40px rgba(0,0,0,0.45); display:none; flex-direction:column; min-height:540px; }
+  .slide.active { display:flex; }
+
+  .slide-header { background:var(--header-dark); color:var(--white); padding:16px 36px 14px; display:flex; justify-content:space-between; align-items:flex-end; }
+  .slide-header .block-label { font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent-mid); font-weight:500; }
+  .slide-header .slide-title { font-family:'DM Serif Display',serif; font-size:21px; line-height:1.25; margin-top:4px; }
+  .slide-header .slide-meta { font-size:11px; color:#999; text-align:right; line-height:1.6; }
+
+  .slide-body { flex:1; padding:24px 36px 18px; display:flex; flex-direction:column; gap:14px; }
+  .slide-footer { height:5px; background:var(--accent); }
+  .slide-footer-bar { height:26px; background:#f0ece4; border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; padding:0 36px; }
+  .slide-footer-bar span { font-size:10px; color:var(--text-light); letter-spacing:0.06em; }
+
+  .cols-2 { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  .cols-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
+
+  .card { background:var(--white); border:1px solid var(--border); border-radius:6px; padding:14px 16px; }
+  .card-accent { border-left:4px solid var(--accent); }
+  .card-success { border-left:4px solid var(--success); }
+  .card h3 { font-size:12px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:7px; }
+  .card-success h3 { color:var(--success); }
+  .card p { font-size:13px; color:var(--text-mid); line-height:1.55; }
+
+  .highlight { background:var(--accent-light); border-left:4px solid var(--accent); border-radius:4px; padding:10px 14px; font-size:13px; color:var(--text-dark); line-height:1.55; }
+  .highlight.warn { background:var(--warn-bg); border-left-color:var(--warn); color:#6b3a10; }
+  .highlight.success { background:var(--success-bg); border-left-color:var(--success); color:#1f4d35; }
+  .trainer-box { background:#2b2b2b; border-radius:6px; padding:10px 14px; display:flex; gap:10px; align-items:flex-start; }
+  .trainer-box .t-badge { flex-shrink:0; background:var(--accent); color:white; font-size:10px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; padding:3px 8px; border-radius:3px; margin-top:1px; }
+  .trainer-box .t-text { font-size:12px; color:#ccc; line-height:1.5; }
+
+  .icon-list { list-style:none; display:flex; flex-direction:column; gap:7px; }
+  .icon-list li { display:flex; align-items:flex-start; gap:9px; font-size:13px; color:var(--text-mid); line-height:1.4; }
+  .icon-list li .ico { flex-shrink:0; width:20px; height:20px; border-radius:50%; background:var(--accent-light); display:flex; align-items:center; justify-content:center; font-size:11px; margin-top:1px; }
+  .icon-list li strong { color:var(--text-dark); }
+
+  .step-list { list-style:none; display:flex; flex-direction:column; gap:8px; }
+  .step-list li { display:flex; align-items:flex-start; gap:10px; font-size:13px; color:var(--text-mid); line-height:1.4; }
+  .step-num { flex-shrink:0; width:22px; height:22px; border-radius:50%; background:var(--accent); color:white; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+
+  .section-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--accent); border-bottom:2px solid var(--accent-light); padding-bottom:3px; margin-bottom:4px; }
+
+  .title-body { flex:1; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:14px; padding:32px 48px; text-align:center; }
+  .block-badge { background:var(--accent); color:white; font-size:12px; font-weight:600; padding:5px 16px; border-radius:20px; letter-spacing:0.06em; text-transform:uppercase; }
+  .title-body h1 { font-family:'DM Serif Display',serif; font-size:36px; color:var(--text-dark); line-height:1.2; }
+  .title-body .sub { font-size:14px; color:var(--text-mid); max-width:560px; line-height:1.55; }
+  .time-pill { display:inline-flex; align-items:center; gap:6px; background:#f0ece4; border:1px solid var(--border); padding:5px 14px; border-radius:20px; font-size:12px; color:var(--text-mid); }
+  .tag-row { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
+  .tag { background:var(--accent-light); color:var(--accent); font-size:11px; font-weight:600; padding:4px 12px; border-radius:12px; }
+
+  .prompt-box { background:#1e1e1e; border-radius:6px; padding:12px 15px; font-size:12px; color:#d4e0f0; line-height:1.6; font-family:monospace; }
+
+  .mock-chat { display:flex; flex-direction:column; gap:7px; background:white; border:1px solid var(--border); border-radius:6px; padding:10px; }
+  .mock-bubble { max-width:88%; padding:6px 10px; border-radius:8px; font-size:11.5px; line-height:1.45; }
+  .mock-bubble.user { background:var(--accent); color:white; border-radius:8px 8px 2px 8px; align-self:flex-end; }
+  .mock-bubble.claude { background:#f0ece4; color:var(--text-dark); border-radius:8px 8px 8px 2px; align-self:flex-start; }
+
+  table.simple { width:100%; border-collapse:collapse; font-size:11.5px; }
+  table.simple thead tr { background:var(--header-dark); color:white; }
+  table.simple thead th { padding:6px 8px; text-align:left; font-weight:600; }
+  table.simple tbody tr { border-bottom:1px solid var(--border); }
+  table.simple tbody tr:nth-child(odd) { background:#f9f7f4; }
+  table.simple tbody td { padding:5px 8px; color:var(--text-mid); }
+  table.simple tbody td:first-child { color:var(--text-dark); font-weight:600; }
+
+  .conn-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .conn-card { background:var(--white); border:1px solid var(--border); border-radius:6px; padding:11px 13px; }
+  .conn-card .cc-title { font-size:12px; font-weight:700; color:var(--text-dark); margin-bottom:4px; }
+  .conn-card .cc-desc { font-size:11.5px; color:var(--text-mid); line-height:1.45; }
+
+  .ba-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .ba-col { border-radius:6px; padding:12px 14px; }
+  .ba-col.before { background:#fff0ec; border:1px solid #f0c8b0; }
+  .ba-col.after { background:var(--success-bg); border:1px solid #b0d4c0; }
+  .ba-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px; }
+  .ba-col.before .ba-label { color:var(--warn); }
+  .ba-col.after .ba-label { color:var(--success); }
+  .ba-col p { font-size:12.5px; line-height:1.5; color:var(--text-dark); }
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <button onclick="goTo(0)" id="btn0" class="active">① Titel</button>
+  <button onclick="goTo(1)" id="btn1">② Was sind Konn.?</button>
+  <button onclick="goTo(2)" id="btn2">③ Einrichten</button>
+  <button onclick="goTo(3)" id="btn3">④ Google Mail</button>
+  <button onclick="goTo(4)" id="btn4">⑤ G-Mail Praxis</button>
+  <button onclick="goTo(5)" id="btn5">⑥ G-Kalender</button>
+  <button onclick="goTo(6)" id="btn6">⑦ G-Kal. Praxis</button>
+  <button onclick="goTo(7)" id="btn7">⑧ Google Drive</button>
+  <button onclick="goTo(8)" id="btn8">⑨ Microsoft 365</button>
+  <button onclick="goTo(9)" id="btn9">⑩ Slack &amp; Teams</button>
+  <button onclick="goTo(10)" id="btn10">⑪ Zoom &amp; Meet</button>
+  <button onclick="goTo(11)" id="btn11">⑫ n8n</button>
+  <button onclick="goTo(12)" id="btn12">⑬ Websuche</button>
+  <button onclick="goTo(13)" id="btn13">⑭ Kombiniert</button>
+  <button onclick="goTo(14)" id="btn14">⑮ Datenschutz</button>
+  <button onclick="goTo(15)" id="btn15">⑯ Übersicht</button>
+</div>
+
+<!-- FOLIE 1 -->
+<div class="slide active" id="slide0">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 5 · Konnektoren</div>
+      <div class="slide-title">Konnektoren</div>
+    </div>
+    <div class="slide-meta">Folie 1 / 16</div>
+  </div>
+  <div class="title-body">
+    <div class="block-badge">Block 5</div>
+    <h1>Konnektoren</h1>
+    <p class="sub">Konnektoren verbinden Claude mit den Diensten, die Sie täglich nutzen — Mail, Kalender, Drive, Teams, Zoom und mehr. Kein Kopieren, kein Wechseln zwischen Apps.</p>
+    <div class="time-pill">⏱ 20 Minuten</div>
+    <div class="tag-row">
+      <span class="tag">Google Workspace</span>
+      <span class="tag">Microsoft 365</span>
+      <span class="tag">Slack · Teams · Zoom</span>
+      <span class="tag">n8n Automatisierung</span>
+      <span class="tag">Websuche</span>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 5 · Konnektoren</span>
+  </div>
+</div>
+
+<!-- FOLIE 2 -->
+<div class="slide" id="slide1">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 5 · Konnektoren</div>
+      <div class="slide-title">Was sind Konnektoren — und wozu brauche ich sie?</div>
+    </div>
+    <div class="slide-meta">Folie 2 / 16</div>
+  </div>
+  <div class="slide-body">
+    <div class="ba-row">
+      <div class="ba-col before">
+        <div class="ba-label">Ohne Konnektor — manuell</div>
+        <p>E-Mail öffnen → kopieren → zu Claude wechseln → einfügen → Antwort kopieren → zurück zu E-Mail → einfügen → senden</p>
+      </div>
+      <div class="ba-col after">
+        <div class="ba-label">Mit Konnektor — direkt in Claude</div>
+        <p>"Beantworte die letzte E-Mail von Müller GmbH mit einer Terminbestätigung für Mittwoch 10 Uhr." → Claude liest, schreibt, sendet.</p>
+      </div>
+    </div>
+    <div class="cols-3">
+      <div class="card card-accent">
+        <h3>Weniger Wechseln</h3>
+        <p>Alles bleibt in Claude — kein ständiges Umschalten</p>
+      </div>
+      <div class="card card-accent">
+        <h3>Mehr Kontext</h3>
+        <p>Claude sieht Ihre echten Daten — keine erfundenen Beispiele</p>
+      </div>
+      <div class="card card-accent">
+        <h3>Mehr Automatisierung</h3>
+        <p>Wiederkehrende Aufgaben können teilautomatisiert werden</p>
+      </div>
+    </div>
+    <div class="highlight">Konnektoren sind optional — aber wer sie einmal nutzt, möchte nicht mehr darauf verzichten.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 5 · Konnektoren</span>
+  </div>
+</div>
+
+<!-- FOLIE 3 -->
+<div class="slide" id="slide2">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 5 · Konnektoren</div>
+      <div class="slide-title">⚙️ Konnektoren einrichten — so geht's</div>
+    </div>
+    <div class="slide-meta">Folie 3 / 16</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Allgemeiner Ablauf</div>
+        <ol class="step-list" style="margin-top:8px;">
+          <li><span class="step-num">1</span><span>Claude.ai → Einstellungen → Konnektoren</span></li>
+          <li><span class="step-num">2</span><span>Gewünschten Dienst auswählen (z.B. Google Mail)</span></li>
+          <li><span class="step-num">3</span><span>Mit Ihrem Google-Konto anmelden und Zugriff erlauben</span></li>
+          <li><span class="step-num">4</span><span>Fertig — Konnektor ist aktiv</span></li>
+        </ol>
+      </div>
+      <div>
+        <div class="section-label">Einrichtung im Überblick</div>
+        <table class="simple" style="margin-top:8px;">
+          <thead><tr><th>Konnektor</th><th>Einrichtung</th></tr></thead>
+          <tbody>
+            <tr><td>📧 Google Mail</td><td>Selbst, 2 Minuten</td></tr>
+            <tr><td>📅 Google Kalender</td><td>Selbst, 2 Minuten</td></tr>
+            <tr><td>📁 Google Drive</td><td>Selbst, 2 Minuten</td></tr>
+            <tr><td>📨 Microsoft Outlook</td><td>Ggf. IT-Abteilung</td></tr>
+            <tr><td>☁️ OneDrive</td><td>Ggf. IT-Abteilung</td></tr>
+            <tr><td>💬 Slack</td><td>Workspace-Admin</td></tr>
+            <tr><td>💼 Microsoft Teams</td><td>Ggf. IT-Abteilung</td></tr>
+            <tr><td>📹 Zoom / Google Meet</td><td>Selbst oder IT</td></tr>
+            <tr><td>⚙️ n8n</td><td>Selbst oder IT</td></tr>
+            <tr><td>🔍 Websuche</td><td>Direkt im Chat</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="highlight warn">Bei Unternehmensaccounts: Microsoft 365, Teams und Slack brauchen ggf. Freigabe durch die IT-Abteilung.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 5 · Konnektoren</span>
+  </div>
+</div>
+
+<!-- FOLIE 4 -->
+<div class="slide" id="slide3">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 5 · Konnektoren</div>
+      <div class="slide-title">📧 Google Mail — was Claude damit kann</div>
+    </div>
+    <div class="slide-meta">Folie 4 / 16</div>
+  </div>
+  <div class="slide-body">
+    <div class="conn-grid">
+      <div class="conn-card">
+        <div class="cc-title">📬 Posteingang lesen</div>
+        <div class="cc-desc">"Zeig mir alle ungelesenen E-Mails von heute" / "Was hat Müller GmbH zuletzt geschrieben?"</div>
+      </div>
+      <div class="conn-card">
+        <div class="cc-title">✉️ E-Mails verfassen</div>
+        <div class="cc-desc">"Schreib eine Antwort auf die letzte E-Mail von Krenn KG" / "Bestätige den Termin für Mittwoch"</div>
+      </div>
+      <div class="conn-card">
+        <div class="cc-title">🔍 Suchen</div>
+        <div class="cc-desc">"Alle E-Mails mit dem Betreff 'Rechnung' der letzten 30 Tage" / "Was hat Stadtgemeinde Linz zuletzt angefragt?"</div>
+      </div>
+      <div class="conn-card">
+        <div class="cc-title">📋 Zusammenfassen</div>
+        <div class="cc-desc">"Fass den E-Mail-Verlauf mit Holzbau Müller der letzten Woche zusammen"</div>
+      </div>
+    </div>
+    <div class="highlight success">Claude schickt keine E-Mails ohne Ihre Bestätigung — er zeigt Ihnen den Entwurf, Sie entscheiden.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 5 · Konnektoren</span>
+  </div>
+</div>
+
+<!-- FOLIE 5 -->
+<div class="slide" id="slide4">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 5 · Konnektoren</div>
+      <div class="slide-title">📧 Google Mail — live Demo</div>
+    </div>
+    <div class="slide-meta">Folie 5 / 16</div>
+  </div>
+  <div class="slide-body">
+    <div class="mock-chat">
+      <div class="mock-bubble user">Was sind meine 3 wichtigsten ungelesenen E-Mails heute?</div>
+      <div class="mock-bubble claude">Ihre 3 wichtigsten:<br>1. Holzbau Müller GmbH (09:14): Lieferverzögerung Kanthölzer — möchten bis Freitag verschieben.<br>2. Stadtgemeinde Linz (08:32): Rückfrage zu Angebot 2025-047, Budget-Entscheidung steht aus.<br>3. AUVA (gestern): Erinnerung Sicherheitsunterweisung bis 31. Mai.</div>
+      <div class="mock-bubble user">Beantworte Müller — wir akzeptieren die Verschiebung auf Freitag, aber nicht später.</div>
+      <div class="mock-bubble claude">Entwurf: Sehr geehrte Damen und Herren, wir bestätigen die Verschiebung der Lieferung auf Freitag, den 23. Mai. Eine weitere Verzögerung ist leider nicht möglich. Bitte bestätigen Sie den Termin. Mit freundlichen Grüßen, Grundstein Bau GmbH — Soll ich die E-Mail senden?</div>
+    </div>
+    <div class="highlight warn">Claude fragt immer nach, bevor er sendet. Sie behalten die volle Kontrolle.</div>
+    <div class="trainer-box">
+      <span class="t-badge">Trainer · Live-Demo</span>
+      <div class="t-text">Google Mail-Konnektor live zeigen — Postfach aufrufen, Beispiel-Prompt eingeben, Antwort-Entwurf zeigen. Teilnehmer schauen zu. Wichtig: Vor der Demo testen, ob der Konnektor verbunden ist.</div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 5 · Konnektoren</span>
+  </div>
+</div>
+
+<!-- FOLIE 6 -->
+<div class="slide" id="slide5">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 5 · Konnektoren</div>
+      <div class="slide-title">📅 Google Kalender — was Claude damit kann</div>
+    </div>
+    <div class="slide-meta">Folie 6 / 16</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Möglichkeiten</div>
+        <ul class="icon-list" style="margin-top:8px;">
+          <li><span class="ico">🔍</span><span><strong>Freie Termine finden:</strong> "Wann bin ich diese Woche für ein 1h-Meeting frei?"</span></li>
+          <li><span class="ico">📅</span><span><strong>Termine erstellen:</strong> "Trag eine Baubesprechung für Montag 9 Uhr ein, Teilnehmer: Huber, Maier"</span></li>
+          <li><span class="ico">📋</span><span><strong>Termine anzeigen:</strong> "Was steht morgen auf meinem Plan?"</span></li>
+          <li><span class="ico">✉️</span><span><strong>Einladungen:</strong> "Schick Ing. Huber eine Einladung für Dienstag 10 Uhr"</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="card card-accent">
+          <h3>Besonders nützlich für...</h3>
+          <ul class="icon-list" style="margin-top:4px;">
+            <li><span class="ico">👥</span><span>Terminfindung bei mehreren Beteiligten</span></li>
+            <li><span class="ico">📨</span><span>Automatische Meeting-Einladungen mit Agenda</span></li>
+            <li><span class="ico">⚠️</span><span>Terminkonflikte erkennen</span></li>
+            <li><span class="ico">📊</span><span>Wochenzusammenfassung ("Was steht diese Woche alles an?")</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 5 · Konnektoren</span>
+  </div>
+</div>
+
+<!-- FOLIE 7 -->
+<div class="slide" id="slide6">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 5 · Konnektoren</div>
+      <div class="slide-title">📅 Google Kalender — live Demo</div>
+    </div>
+    <div class="slide-meta">Folie 7 / 16</div>
+  </div>
+  <div class="slide-body">
+    <div class="mock-chat">
+      <div class="mock-bubble user">Ich brauche nächste Woche einen Termin für eine Baubesprechung mit Bauleiter Huber und Architekt Maier. Ca. 1 Stunde. Wann passt es allen?</div>
+      <div class="mock-bubble claude">Ich schaue in alle drei Kalender... Gemeinsame freie Slots nächste Woche: Dienstag 14–15 Uhr, Donnerstag 10–11 Uhr. Welchen bevorzugen Sie?</div>
+      <div class="mock-bubble user">Donnerstag 10 Uhr. Raum 2. Themen: Rohbau-Fortschritt, Fensterlieferung, nächste Schritte.</div>
+      <div class="mock-bubble claude">Ich habe den Termin eingetragen und Einladungen mit folgender Agenda gesendet:<br>1. Rohbau-Fortschritt (15 min)<br>2. Fensterlieferung und Verzögerung (15 min)<br>3. Nächste Schritte und Aufgaben (30 min)<br>Bestätigung erhalten von: Huber ✓ — Maier: ausstehend.</div>
+    </div>
+    <div class="highlight success">Von "ich brauche einen Termin" bis zur versendeten Einladung: 2 Minuten statt 20.</div>
+    <div class="trainer-box">
+      <span class="t-badge">Trainer · Live-Demo</span>
+      <div class="t-text">Google Kalender-Demo live zeigen — oder Gesprächsverlauf am Beamer zeigen, falls Kalender nicht live verbunden. Teilnehmer schauen zu.</div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 5 · Konnektoren</span>
+  </div>
+</div>
+
+<!-- FOLIE 8 -->
+<div class="slide" id="slide7">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 5 · Konnektoren</div>
+      <div class="slide-title">📁 Google Drive — Dateien direkt einbeziehen</div>
+    </div>
+    <div class="slide-meta">Folie 8 / 16</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Was möglich ist</div>
+        <ul class="icon-list" style="margin-top:8px;">
+          <li><span class="ico">📖</span><span><strong>Dateien lesen:</strong> "Lies das Angebot 2025-047 aus Drive und fass es zusammen"</span></li>
+          <li><span class="ico">✏️</span><span><strong>Dokumente erstellen:</strong> "Erstell ein neues Protokoll in meinem Drive-Ordner 'Besprechungen'"</span></li>
+          <li><span class="ico">🔍</span><span><strong>Suchen:</strong> "In welchem Drive-Ordner liegt der Vertrag mit Stadtgemeinde Linz?"</span></li>
+          <li><span class="ico">🔄</span><span><strong>Aktualisieren:</strong> "Füge in die Materialliste in Drive die neuen Preise ein"</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="card card-accent">
+          <h3>Kombination mit anderen Konnektoren</h3>
+          <p style="margin-bottom:8px;">Beispiel: E-Mail von Kunde enthält eine Anfrage → Claude liest E-Mail, sucht relevantes Angebot in Drive, erstellt Antwort auf Basis des Angebots — alles in einem Schritt.</p>
+        </div>
+      </div>
+    </div>
+    <div class="highlight warn">Drive-Zugriff gilt nur für Dateien, auf die Sie Zugriff haben. Geteilte Team-Ordner brauchen ggf. separate Freigabe.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 5 · Konnektoren</span>
+  </div>
+</div>
+
+<!-- FOLIE 9 -->
+<div class="slide" id="slide8">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 5 · Konnektoren</div>
+      <div class="slide-title">📨 Microsoft 365 — Outlook, OneDrive, Teams</div>
+    </div>
+    <div class="slide-meta">Folie 9 / 16</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Was mit Microsoft möglich ist</div>
+        <ul class="icon-list" style="margin-top:8px;">
+          <li><span class="ico">📧</span><span><strong>Outlook:</strong> E-Mails lesen, verfassen, Postfach zusammenfassen</span></li>
+          <li><span class="ico">☁️</span><span><strong>OneDrive:</strong> Dateien lesen, erstellen, Ordner durchsuchen</span></li>
+          <li><span class="ico">💬</span><span><strong>Teams:</strong> Nachrichten lesen, Zusammenfassungen von Kanälen</span></li>
+          <li><span class="ico">📅</span><span><strong>Calendar:</strong> Termine, Besprechungen, Verfügbarkeit</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="card card-accent">
+          <h3>Wichtig bei Unternehmenskonten</h3>
+          <p>Microsoft 365 in Firmen ist oft vom IT-Administrator verwaltet. OAuth-Verbindungen zu externen Diensten wie Claude müssen ggf. erst freigegeben werden. Vor der Einrichtung kurz bei der IT anfragen. Privatkonten (Outlook.com) funktionieren direkt ohne IT.</p>
+        </div>
+      </div>
+    </div>
+    <div class="highlight warn">Microsoft 365 Business/Enterprise: Immer zuerst die IT-Abteilung fragen.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 5 · Konnektoren</span>
+  </div>
+</div>
+
+<!-- FOLIE 10 -->
+<div class="slide" id="slide9">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 5 · Konnektoren</div>
+      <div class="slide-title">💬 Slack &amp; Microsoft Teams</div>
+    </div>
+    <div class="slide-meta">Folie 10 / 16</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="card card-accent">
+          <h3>Slack — was Claude kann</h3>
+          <ul class="icon-list" style="margin-top:6px;">
+            <li><span class="ico">📖</span><span>Nachrichten in Channels lesen und zusammenfassen</span></li>
+            <li><span class="ico">✉️</span><span>Auf Direktnachrichten antworten</span></li>
+            <li><span class="ico">🔍</span><span>Informationen aus Kanälen extrahieren ("Was wurde in #baustelle-linz diese Woche besprochen?")</span></li>
+            <li><span class="ico">🔔</span><span>Benachrichtigungen zusammenfassen</span></li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card card-accent">
+          <h3>Teams — was Claude kann</h3>
+          <ul class="icon-list" style="margin-top:6px;">
+            <li><span class="ico">📋</span><span>Kanal-Nachrichten zusammenfassen</span></li>
+            <li><span class="ico">🎙️</span><span>Meeting-Transkripte verarbeiten</span></li>
+            <li><span class="ico">✅</span><span>Aufgaben aus Besprechungen extrahieren</span></li>
+            <li><span class="ico">📝</span><span>Status-Updates verfassen und posten</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="highlight warn">Sowohl Slack als auch Teams brauchen einen Admin des Workspace für die Konnektor-Einrichtung. Im Unternehmensumfeld: IT-Abteilung kontaktieren.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 5 · Konnektoren</span>
+  </div>
+</div>
+
+<!-- FOLIE 11 -->
+<div class="slide" id="slide10">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 5 · Konnektoren</div>
+      <div class="slide-title">📹 Zoom &amp; Google Meet — Meetings nachbereiten</div>
+    </div>
+    <div class="slide-meta">Folie 11 / 16</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Was möglich ist</div>
+        <ul class="icon-list" style="margin-top:8px;">
+          <li><span class="ico">📝</span><span>Meeting-Transkripte zusammenfassen</span></li>
+          <li><span class="ico">✅</span><span>Aufgaben und Beschlüsse aus Meetings extrahieren</span></li>
+          <li><span class="ico">📋</span><span>Protokoll automatisch erstellen</span></li>
+          <li><span class="ico">✉️</span><span>Follow-up E-Mails aus Meeting-Notizen</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="section-label">Typischer Workflow</div>
+        <ol class="step-list" style="margin-top:8px;">
+          <li><span class="step-num">1</span><span>Zoom-Meeting aufzeichnen (mit Transkript-Funktion)</span></li>
+          <li><span class="step-num">2</span><span>Transkript nach dem Meeting hochladen</span></li>
+          <li><span class="step-num">3</span><span>"Erstell ein Protokoll aus diesem Transkript mit Aufgabenliste"</span></li>
+          <li><span class="step-num">4</span><span>Protokoll prüfen und versenden</span></li>
+        </ol>
+      </div>
+    </div>
+    <div class="highlight">Besonders nützlich nach langen Besprechungen — Claude fasst 60 Minuten Meeting in 2 Minuten zusammen.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 5 · Konnektoren</span>
+  </div>
+</div>
+
+<!-- FOLIE 12 -->
+<div class="slide" id="slide11">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 5 · Konnektoren</div>
+      <div class="slide-title">⚙️ n8n — Workflows automatisieren</div>
+    </div>
+    <div class="slide-meta">Folie 12 / 16</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Was ist n8n?</div>
+        <ul class="icon-list" style="margin-top:8px;">
+          <li><span class="ico">🔧</span><span>Ein No-Code-Automatisierungstool</span></li>
+          <li><span class="ico">🔗</span><span>Verbindet verschiedene Dienste miteinander</span></li>
+          <li><span class="ico">🤖</span><span>Claude ist einer der möglichen Bausteine</span></li>
+          <li><span class="ico">⚡</span><span>Wiederkehrende Aufgaben vollautomatisch</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="section-label">Beispiel-Workflow</div>
+        <ol class="step-list" style="margin-top:8px;">
+          <li><span class="step-num">1</span><span>Neues Angebot per E-Mail erhalten</span></li>
+          <li><span class="step-num">2</span><span>n8n erkennt E-Mail automatisch</span></li>
+          <li><span class="step-num">3</span><span>Claude liest und bewertet den Inhalt</span></li>
+          <li><span class="step-num">4</span><span>Antwort-Entwurf wird erstellt</span></li>
+          <li><span class="step-num">5</span><span>Zur Prüfung vorgelegt</span></li>
+        </ol>
+      </div>
+    </div>
+    <div class="highlight warn">n8n ist etwas fortgeschrittener — für den Einstieg reichen Chat und Konnektoren vollkommen. n8n ist ein optionaler nächster Schritt für Automatisierungs-Enthusiasten.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 5 · Konnektoren</span>
+  </div>
+</div>
+
+<!-- FOLIE 13 -->
+<div class="slide" id="slide12">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 5 · Konnektoren</div>
+      <div class="slide-title">🔍 Websuche — aktuelle Informationen direkt im Chat</div>
+    </div>
+    <div class="slide-meta">Folie 13 / 16</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Wann ist Websuche wichtig</div>
+        <ul class="icon-list" style="margin-top:8px;">
+          <li><span class="ico">💰</span><span>Aktuelle Preise, Normen, Vorschriften</span></li>
+          <li><span class="ico">🔍</span><span>Neue Lieferanten oder Produkte recherchieren</span></li>
+          <li><span class="ico">⚖️</span><span>Rechtliche oder gesetzliche Änderungen</span></li>
+          <li><span class="ico">📰</span><span>Aktuelle Nachrichten zu einem Thema</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="section-label">So aktivieren</div>
+        <ol class="step-list" style="margin-top:8px;">
+          <li><span class="step-num">1</span><span>Im Chat-Eingabefeld: Such-Icon (Lupe) klicken</span></li>
+          <li><span class="step-num">2</span><span>Websuche ist aktiv — Claude sucht im Internet</span></li>
+          <li><span class="step-num">3</span><span>Ergebnisse enthalten Quellen</span></li>
+        </ol>
+        <div class="prompt-box" style="margin-top:10px;font-size:11.5px;">"Welche ÖNORM gilt aktuell für Pflasterarbeiten in Österreich?"</div>
+      </div>
+    </div>
+    <div class="highlight warn">Ohne Websuche: nur Trainingsdaten bis Anfang 2025. Mit Websuche: aktuelle Ergebnisse mit Quellenangabe.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 5 · Konnektoren</span>
+  </div>
+</div>
+
+<!-- FOLIE 14 -->
+<div class="slide" id="slide13">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 5 · Konnektoren</div>
+      <div class="slide-title">🎯 Konnektoren kombiniert — ein kompletter Workflow</div>
+    </div>
+    <div class="slide-meta">Folie 14 / 16</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Szenario: Anfrage von Stadtgemeinde Linz</div>
+        <ol class="step-list" style="margin-top:8px;">
+          <li><span class="step-num">1</span><span>Neue E-Mail von Stadtgemeinde Linz: Anfrage für Pflasterarbeiten</span></li>
+          <li><span class="step-num">2</span><span>Claude liest E-Mail (Mail-Konnektor)</span></li>
+          <li><span class="step-num">3</span><span>Claude sucht ähnliche Projekte in Drive (Drive-Konnektor)</span></li>
+          <li><span class="step-num">4</span><span>Claude erstellt Angebots-Entwurf auf Basis der Vorlagen</span></li>
+          <li><span class="step-num">5</span><span>Termin für Besprechung wird in Kalender eingetragen (Kalender-Konnektor)</span></li>
+          <li><span class="step-num">6</span><span>Einladung an Bauleiter Huber und Kunden gesendet</span></li>
+        </ol>
+      </div>
+      <div>
+        <div class="card card-success">
+          <h3>Was das bedeutet</h3>
+          <p style="margin-bottom:10px;">Früher: 45–60 Minuten für diese Aufgaben.</p>
+          <p>Mit Claude + Konnektoren: 10–15 Minuten.</p>
+          <p style="margin-top:8px;font-weight:600;color:var(--success);">Das ist keine Zukunftsmusik — das funktioniert heute.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 5 · Konnektoren</span>
+  </div>
+</div>
+
+<!-- FOLIE 15 -->
+<div class="slide" id="slide14">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 5 · Konnektoren</div>
+      <div class="slide-title">🔒 Datenschutz bei Konnektoren</div>
+    </div>
+    <div class="slide-meta">Folie 15 / 16</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Was Claude sieht</div>
+        <ul class="icon-list" style="margin-top:8px;">
+          <li><span class="ico">🎯</span><span><strong>Nur was Sie freigeben:</strong> Konnektoren haben definierten Zugriff</span></li>
+          <li><span class="ico">👁️</span><span><strong>Nur auf Anfrage:</strong> Claude greift nicht automatisch auf Daten zu</span></li>
+          <li><span class="ico">🗑️</span><span><strong>Keine dauerhafte Speicherung:</strong> Inhalte aus Konnektoren werden nicht dauerhaft in Claude gespeichert</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="card card-accent">
+          <h3>Grundregeln</h3>
+          <ul class="icon-list" style="margin-top:4px;">
+            <li><span class="ico">🚫</span><span>Keine hochvertraulichen Daten (Passwörter, Bankdaten) über Konnektoren</span></li>
+            <li><span class="ico">👥</span><span>Bei Firmenkonten: IT und Datenschutzbeauftragten einbeziehen</span></li>
+            <li><span class="ico">🇺🇸</span><span>US-Anbieter: Daten werden auf US-Servern verarbeitet (Anthropic = USA)</span></li>
+            <li><span class="ico">✅</span><span>Im Pro-Plan: Chats werden nicht für KI-Training verwendet</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="highlight warn">Für sensible Geschäftsdaten: Immer zuerst die Datenschutzrichtlinien Ihres Unternehmens prüfen.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 5 · Konnektoren</span>
+  </div>
+</div>
+
+<!-- FOLIE 16 -->
+<div class="slide" id="slide15">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 5 · Konnektoren</div>
+      <div class="slide-title">📊 Alle Konnektoren auf einen Blick</div>
+    </div>
+    <div class="slide-meta">Folie 16 / 16</div>
+  </div>
+  <div class="slide-body">
+    <table class="simple">
+      <thead>
+        <tr><th>Konnektor</th><th>Was Claude kann</th><th>Besonderheit</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>📧 Google Mail</td><td>Lesen, verfassen, suchen</td><td>Selbst einrichten</td></tr>
+        <tr><td>📅 Google Kalender</td><td>Termine, Einladungen, Verfügbarkeit</td><td>Selbst einrichten</td></tr>
+        <tr><td>📁 Google Drive</td><td>Dateien lesen, erstellen, suchen</td><td>Selbst einrichten</td></tr>
+        <tr><td>📨 Microsoft Outlook</td><td>E-Mails lesen und verfassen</td><td>Ggf. IT-Freigabe</td></tr>
+        <tr><td>☁️ OneDrive</td><td>Dateien verwalten</td><td>Ggf. IT-Freigabe</td></tr>
+        <tr><td>💬 Slack</td><td>Kanäle lesen, posten</td><td>Workspace-Admin</td></tr>
+        <tr><td>💼 Microsoft Teams</td><td>Kanäle, Meetings</td><td>Ggf. IT-Freigabe</td></tr>
+        <tr><td>📹 Zoom / Meet</td><td>Transkripte, Protokolle</td><td>Selbst oder IT</td></tr>
+        <tr><td>⚙️ n8n</td><td>Vollautomatisierung</td><td>Fortgeschritten</td></tr>
+        <tr><td>🔍 Websuche</td><td>Aktuelle Infos mit Quellen</td><td>Direkt im Chat</td></tr>
+      </tbody>
+    </table>
+    <div class="highlight success">Tipp: Starten Sie mit Google Mail oder Google Kalender — schnell eingerichtet, sofort nützlich.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 5 · Konnektoren</span>
+  </div>
+</div>
+
+<script>
+const total = 16;
+function goTo(n) {
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('slide' + n).classList.add('active');
+  document.getElementById('btn' + n).classList.add('active');
+}
+window.addEventListener('message', function(e) {
+  const active = document.querySelector('.slide.active');
+  const idx = active ? parseInt(active.id.replace('slide','')) : 0;
+  if (e.data === 'next' || e.data?.type === 'next') {
+    if (idx < total - 1) { goTo(idx + 1); }
+    else { window.parent.postMessage('blockEnd', '*'); }
+  } else if (e.data === 'prev' || e.data?.type === 'prev') {
+    if (idx > 0) { goTo(idx - 1); }
+    else { window.parent.postMessage('blockStart', '*'); }
+  }
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowRight' || e.key === ' ') {
+    e.preventDefault();
+    const active = document.querySelector('.slide.active');
+    const idx = active ? parseInt(active.id.replace('slide','')) : 0;
+    if (idx < total - 1) goTo(idx + 1);
+    else window.parent.postMessage('blockEnd', '*');
+  } else if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    const active = document.querySelector('.slide.active');
+    const idx = active ? parseInt(active.id.replace('slide','')) : 0;
+    if (idx > 0) goTo(idx - 1);
+    else window.parent.postMessage('blockStart', '*');
+  }
+});
+</script>
+</body>
+</html>

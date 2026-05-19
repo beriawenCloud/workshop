@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Block 8 – Wrap-up & Ausblick | Claude-Workshop</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #f7f5f0;
+    --header-dark: #2b2b2b;
+    --accent: #4a6fa5;
+    --accent-light: #e8eef7;
+    --accent-mid: #7a9bc8;
+    --text-dark: #1e1e1e;
+    --text-mid: #4a4a4a;
+    --text-light: #7a7a7a;
+    --border: #ddd8cf;
+    --white: #ffffff;
+    --footer-stripe: #4a6fa5;
+    --success: #3a7d5a;
+    --success-bg: #edf7f2;
+    --warn: #b5621a;
+    --warn-bg: #fff7ef;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #3a3a3a;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 20px; gap: 16px; min-height: 100vh;
+  }
+
+  .nav {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    justify-content: center; max-width: 980px;
+  }
+  .nav button {
+    background: #555; color: #fff; border: none;
+    padding: 5px 11px; border-radius: 4px;
+    font-family: 'DM Sans', sans-serif; font-size: 11px;
+    cursor: pointer; transition: background 0.2s; white-space: nowrap;
+  }
+  .nav button:hover { background: var(--accent); }
+  .nav button.active { background: var(--accent); }
+
+  .slide {
+    width: 960px; max-width: 100%; background: var(--cream);
+    border-radius: 4px; overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.45);
+    display: none; flex-direction: column; min-height: 540px;
+  }
+  .slide.active { display: flex; }
+
+  .slide-header {
+    background: var(--header-dark); color: var(--white);
+    padding: 16px 36px 14px;
+    display: flex; justify-content: space-between; align-items: flex-end;
+  }
+  .slide-header .block-label {
+    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--accent-mid); font-weight: 500;
+  }
+  .slide-header .slide-title {
+    font-family: 'DM Serif Display', serif; font-size: 21px;
+    line-height: 1.25; margin-top: 4px;
+  }
+  .slide-header .slide-meta {
+    font-size: 11px; color: #999; text-align: right; line-height: 1.6;
+  }
+
+  .slide-body {
+    flex: 1; padding: 24px 36px 18px;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+
+  .slide-footer { height: 5px; background: var(--footer-stripe); }
+  .slide-footer-bar {
+    height: 26px; background: #f0ece4;
+    border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 36px;
+  }
+  .slide-footer-bar span { font-size: 10px; color: var(--text-light); letter-spacing: 0.06em; }
+
+  .cols-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .cols-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+
+  .card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 6px; padding: 14px 16px;
+  }
+  .card-accent { border-left: 4px solid var(--accent); }
+  .card-success { border-left: 4px solid var(--success); }
+  .card h3 {
+    font-size: 12px; font-weight: 700; color: var(--accent);
+    text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 7px;
+  }
+  .card p { font-size: 13px; color: var(--text-mid); line-height: 1.55; }
+
+  .highlight {
+    background: var(--accent-light); border-left: 4px solid var(--accent);
+    border-radius: 4px; padding: 10px 14px;
+    font-size: 13px; color: var(--text-dark); line-height: 1.55;
+  }
+  .highlight.warn { background: var(--warn-bg); border-left-color: var(--warn); color: #6b3a10; }
+  .highlight.success { background: var(--success-bg); border-left-color: var(--success); color: #1f4d35; }
+
+  .icon-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .icon-list li {
+    display: flex; align-items: flex-start; gap: 9px;
+    font-size: 13px; color: var(--text-mid); line-height: 1.45;
+  }
+  .icon-list li .ico {
+    flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%;
+    background: var(--accent-light); display: flex; align-items: center;
+    justify-content: center; font-size: 11px; margin-top: 1px;
+  }
+  .icon-list li strong { color: var(--text-dark); }
+
+  .section-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--accent);
+    border-bottom: 2px solid var(--accent-light);
+    padding-bottom: 3px; margin-bottom: 4px;
+  }
+
+  /* TITLE */
+  .title-body {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 14px; padding: 32px 48px; text-align: center;
+  }
+  .block-badge {
+    background: var(--accent); color: white; font-size: 12px; font-weight: 600;
+    padding: 5px 16px; border-radius: 20px; letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .title-body h1 { font-family: 'DM Serif Display', serif; font-size: 36px; color: var(--text-dark); line-height: 1.2; }
+  .title-body .sub { font-size: 14px; color: var(--text-mid); max-width: 540px; line-height: 1.55; }
+  .time-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #f0ece4; border: 1px solid var(--border);
+    padding: 5px 14px; border-radius: 20px; font-size: 12px; color: var(--text-mid);
+  }
+
+  /* RECAP GRID */
+  .recap-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+  }
+  .recap-item {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 8px; padding: 12px 14px;
+    display: flex; flex-direction: column; gap: 5px;
+  }
+  .recap-item .ri-icon { font-size: 20px; }
+  .recap-item .ri-block {
+    font-size: 9px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--accent-mid);
+  }
+  .recap-item .ri-title { font-size: 12px; font-weight: 700; color: var(--text-dark); }
+  .recap-item .ri-desc { font-size: 11px; color: var(--text-mid); line-height: 1.4; }
+  .recap-item.done { border-color: var(--success); }
+  .recap-item.done .ri-block { color: var(--success); }
+
+  /* NEXT STEPS */
+  .next-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  }
+  .next-item {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 8px; padding: 13px 15px;
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .next-item .ni-num {
+    flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%;
+    background: var(--accent); color: white; font-size: 14px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .next-item .ni-title { font-size: 13px; font-weight: 700; color: var(--text-dark); margin-bottom: 3px; }
+  .next-item .ni-desc { font-size: 12px; color: var(--text-mid); line-height: 1.5; }
+
+  /* AUSBLICK */
+  .ausblick-item {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 8px; padding: 13px 16px;
+    display: flex; gap: 14px; align-items: flex-start;
+  }
+  .ausblick-item .ai-icon { font-size: 26px; flex-shrink: 0; margin-top: 2px; }
+  .ausblick-item .ai-content { flex: 1; }
+  .ausblick-item .ai-title { font-size: 13px; font-weight: 700; color: var(--text-dark); margin-bottom: 4px; }
+  .ausblick-item .ai-desc { font-size: 12px; color: var(--text-mid); line-height: 1.5; }
+  .ausblick-item .ai-badge {
+    font-size: 9px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.07em; padding: 2px 8px; border-radius: 3px;
+    display: inline-block; margin-top: 5px;
+  }
+  .ai-badge.soon { background: var(--warn-bg); color: var(--warn); }
+  .ai-badge.later { background: #f0ece4; color: var(--text-light); }
+
+  /* FRAGEN SLIDE */
+  .fragen-body {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 20px; padding: 32px 48px; text-align: center;
+  }
+  .fragen-body h2 {
+    font-family: 'DM Serif Display', serif; font-size: 40px;
+    color: var(--text-dark); line-height: 1.2;
+  }
+  .fragen-body .fragen-sub {
+    font-size: 15px; color: var(--text-mid); max-width: 500px; line-height: 1.6;
+  }
+  .fragen-kontakt {
+    display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 8px;
+  }
+  .fk-item {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 18px;
+    font-size: 13px; color: var(--text-dark);
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  /* ABSCHLUSS */
+  .abschluss-body {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 18px; padding: 32px 48px; text-align: center;
+    background: linear-gradient(160deg, #f7f5f0 60%, #e8eef7 100%);
+  }
+  .abschluss-body h2 {
+    font-family: 'DM Serif Display', serif; font-size: 32px;
+    color: var(--text-dark); line-height: 1.3;
+  }
+  .abschluss-body p { font-size: 14px; color: var(--text-mid); max-width: 520px; line-height: 1.65; }
+  .abschluss-pills { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  .abschluss-pill {
+    background: var(--accent); color: white; font-size: 12px; font-weight: 600;
+    padding: 7px 18px; border-radius: 20px;
+  }
+  .abschluss-pill.light {
+    background: var(--white); color: var(--accent);
+    border: 1px solid var(--accent);
+  }
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <button onclick="goTo(0)" id="btn0" class="active">① Titel</button>
+  <button onclick="goTo(1)" id="btn1">② Was haben wir gelernt?</button>
+  <button onclick="goTo(2)" id="btn2">③ Nächste Schritte</button>
+  <button onclick="goTo(3)" id="btn3">④ Ausblick</button>
+  <button onclick="goTo(4)" id="btn4">⑤ Was Claude nicht kann</button>
+  <button onclick="goTo(5)" id="btn5">⑥ Fragen & Diskussion</button>
+  <button onclick="goTo(6)" id="btn6">⑦ Abschluss</button>
+</div>
+
+
+<!-- ===== F1: TITEL ===== -->
+<div class="slide active" id="slide0">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 8 · Wrap-up</div>
+      <div class="slide-title">Rückblick, Ausblick & offene Fragen</div>
+    </div>
+    <div class="slide-meta">Folie 1 / 7</div>
+  </div>
+  <div class="title-body">
+    <div class="block-badge">Block 8</div>
+    <h1>Wrap-up, Ausblick<br>&amp; Fragen</h1>
+    <p class="sub">Was haben wir heute gelernt — was kommt als nächstes — und: Was möchten Sie noch wissen?</p>
+    <div class="time-pill">🕐 10 Minuten</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 8 · Wrap-up</span>
+  </div>
+</div>
+
+
+<!-- ===== F2: WAS HABEN WIR GELERNT ===== -->
+<div class="slide" id="slide1">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 8 · Wrap-up</div>
+      <div class="slide-title">Was wir heute erarbeitet haben</div>
+    </div>
+    <div class="slide-meta">Folie 2 / 7</div>
+  </div>
+  <div class="slide-body">
+    <div class="recap-grid">
+      <div class="recap-item done">
+        <div class="ri-icon">🚀</div>
+        <div class="ri-block">Block 0–1</div>
+        <div class="ri-title">Grundlagen</div>
+        <div class="ri-desc">Was Claude ist, was er nicht ist — und warum er kein einfaches Google ist</div>
+      </div>
+      <div class="recap-item done">
+        <div class="ri-icon">🖥️</div>
+        <div class="ri-block">Block 2</div>
+        <div class="ri-title">Die Oberfläche</div>
+        <div class="ri-desc">Chat, Projekte, Dateien, Artefakte — die wichtigsten Funktionen kennen und nutzen</div>
+      </div>
+      <div class="recap-item done">
+        <div class="ri-icon">✍️</div>
+        <div class="ri-block">Block 3</div>
+        <div class="ri-title">Prompts schreiben</div>
+        <div class="ri-desc">Rolle, Kontext, Ziel, Format — wie ein guter Auftrag aussieht</div>
+      </div>
+      <div class="recap-item done">
+        <div class="ri-icon">📁</div>
+        <div class="ri-block">Block 4</div>
+        <div class="ri-title">Cowork & Projekte</div>
+        <div class="ri-desc">Ordner verbinden, Dateien hochladen, Projekte mit Anweisungen einrichten</div>
+      </div>
+      <div class="recap-item done">
+        <div class="ri-icon">🔌</div>
+        <div class="ri-block">Block 5</div>
+        <div class="ri-title">Konnektoren</div>
+        <div class="ri-desc">Google, Microsoft, Slack, Teams, Zoom, n8n und Websuche verbinden</div>
+      </div>
+      <div class="recap-item done">
+        <div class="ri-icon">💼</div>
+        <div class="ri-block">Block 6–7</div>
+        <div class="ri-title">Anwendungen</div>
+        <div class="ri-desc">10 Büro-Anwendungsfälle + Dokumente & Formulare direkt erstellen</div>
+      </div>
+    </div>
+    <div class="highlight success">
+      <strong>Das Wichtigste:</strong> Claude ist kein einmaliges Tool — er wird besser, je mehr Sie ihn einsetzen. Ausprobieren ist der einzige Weg zum Routineeinsatz.
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 8 · Wrap-up</span>
+  </div>
+</div>
+
+
+<!-- ===== F3: NÄCHSTE SCHRITTE ===== -->
+<div class="slide" id="slide2">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 8 · Wrap-up</div>
+      <div class="slide-title">Ihre nächsten Schritte — konkret und machbar</div>
+    </div>
+    <div class="slide-meta">Folie 3 / 7</div>
+  </div>
+  <div class="slide-body">
+    <div class="next-grid">
+      <div class="next-item">
+        <div class="ni-num">1</div>
+        <div>
+          <div class="ni-title">Noch heute: Account anlegen &amp; ersten echten Fall lösen</div>
+          <div class="ni-desc">Unter claude.ai kostenlos registrieren — und dann sofort eine echte Aufgabe aus dem Arbeitsalltag eingeben: eine E-Mail, eine Zusammenfassung, eine Checkliste. Nicht üben, sondern echte Arbeit.</div>
+        </div>
+      </div>
+      <div class="next-item">
+        <div class="ni-num">2</div>
+        <div>
+          <div class="ni-title">Diese Woche: Ein Projekt anlegen</div>
+          <div class="ni-desc">Richten Sie ein Claude-Projekt für Ihren Bereich ein — Briefkopf, Ton, Standardformulierungen hinterlegen. Einmal einrichten, dauerhaft schneller arbeiten.</div>
+        </div>
+      </div>
+      <div class="next-item">
+        <div class="ni-num">3</div>
+        <div>
+          <div class="ni-title">Diesen Monat: Einen Konnektor verbinden</div>
+          <div class="ni-desc">Google Mail, Google Kalender oder OneDrive — einen Konnektor einrichten und zwei Wochen lang aktiv nutzen. Dann sehen Sie, ob er Ihren Alltag erleichtert.</div>
+        </div>
+      </div>
+      <div class="next-item">
+        <div class="ni-num">4</div>
+        <div>
+          <div class="ni-title">Langfristig: Kolleginnen einbeziehen</div>
+          <div class="ni-desc">Teilen Sie funktionierende Prompts im Team. Was für Sie funktioniert, hilft auch anderen — und gemeinsame Vorlagen sparen allen Zeit.</div>
+        </div>
+      </div>
+    </div>
+    <div class="highlight">
+      <strong>Tipp:</strong> Führen Sie eine kleine Prompt-Sammlung — ein einfaches Word-Dokument oder eine Notiz reicht. Die besten Prompts wiederverwenden ist schneller als jedes Mal neu formulieren.
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 8 · Wrap-up</span>
+  </div>
+</div>
+
+
+<!-- ===== F4: AUSBLICK ===== -->
+<div class="slide" id="slide3">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 8 · Ausblick</div>
+      <div class="slide-title">Was noch kommt — ein Blick nach vorne</div>
+    </div>
+    <div class="slide-meta">Folie 4 / 7</div>
+  </div>
+  <div class="slide-body">
+    <div class="section-label">Features, die sich lohnen zu kennen</div>
+    <div style="display:flex; flex-direction:column; gap:10px; margin-top:8px;">
+      <div class="ausblick-item">
+        <div class="ai-icon">⚡</div>
+        <div class="ai-content">
+          <div class="ai-title">Dispatch — Aufgaben vollautomatisch erledigen lassen</div>
+          <div class="ai-desc">Mit dem Max-Plan kann Claude Aufgaben selbstständig im Hintergrund ausführen — z.B. jeden Morgen die wichtigsten E-Mails zusammenfassen, Kalender prüfen und eine Tagesübersicht erstellen. Kein manueller Auftrag mehr nötig.</div>
+          <div class="ai-badge soon">Max-Plan erforderlich</div>
+        </div>
+      </div>
+      <div class="ausblick-item">
+        <div class="ai-icon">🔗</div>
+        <div class="ai-content">
+          <div class="ai-title">n8n — Workflows vollständig automatisieren</div>
+          <div class="ai-desc">Mit n8n können Sie Claude in komplexe Abläufe einbinden: Eingehende Bestellung per E-Mail → Claude erstellt automatisch die Auftragsbestätigung → speichert sie als PDF → trägt den Termin in den Kalender ein. Alles ohne manuellen Eingriff.</div>
+          <div class="ai-badge soon">Etwas Einrichtungsaufwand</div>
+        </div>
+      </div>
+      <div class="ausblick-item">
+        <div class="ai-icon">🤖</div>
+        <div class="ai-content">
+          <div class="ai-title">Eigene Chatbots für Ihr Unternehmen</div>
+          <div class="ai-desc">Claude kann als Basis für einen unternehmensinternen Assistenten dienen — z.B. ein Chatbot, der Mitarbeitern auf Fragen zu internen Abläufen, Formularen oder Projekten antwortet.</div>
+          <div class="ai-badge later">Für später</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 8 · Wrap-up</span>
+  </div>
+</div>
+
+
+<!-- ===== F5: WAS CLAUDE NICHT KANN ===== -->
+<div class="slide" id="slide4">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 8 · Wrap-up</div>
+      <div class="slide-title">Was Claude nicht kann — und was wichtig bleibt</div>
+    </div>
+    <div class="slide-meta">Folie 5 / 7</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label" style="color:#b5621a;">Grenzen kennen</div>
+        <ul class="icon-list" style="margin-top:8px;">
+          <li><span class="ico" style="background:#fff7ef;">⚠️</span><div><strong>Kein aktuelles Wissen ohne Websuche</strong> — ohne aktivierte Suche kennt Claude nichts nach seinem Trainingsstand</div></li>
+          <li><span class="ico" style="background:#fff7ef;">⚠️</span><div><strong>Kann Fehler machen</strong> — Zahlen, Namen, Daten immer prüfen, besonders bei rechtlich relevanten Dokumenten</div></li>
+          <li><span class="ico" style="background:#fff7ef;">⚠️</span><div><strong>Kein Gedächtnis zwischen Chats</strong> — ohne Projekte beginnt jeder neue Chat ohne Kontext</div></li>
+          <li><span class="ico" style="background:#fff7ef;">⚠️</span><div><strong>Kein Ersatz für Fachurteil</strong> — rechtliche, steuerliche oder medizinische Entscheidungen brauchen Experten</div></li>
+        </ul>
+      </div>
+      <div>
+        <div class="section-label" style="color:var(--success);">Was bleibt Ihre Aufgabe</div>
+        <ul class="icon-list" style="margin-top:8px;">
+          <li><span class="ico" style="background:var(--success-bg);">✓</span><div><strong>Prüfen und freigeben</strong> — Claude liefert einen Entwurf, Sie entscheiden</div></li>
+          <li><span class="ico" style="background:var(--success-bg);">✓</span><div><strong>Kontext und Urteil</strong> — Sie kennen den Kunden, die Geschichte, die Situation</div></li>
+          <li><span class="ico" style="background:var(--success-bg);">✓</span><div><strong>Verantwortung</strong> — Was mit Ihrem Namen unterschrieben wird, liegt bei Ihnen</div></li>
+          <li><span class="ico" style="background:var(--success-bg);">✓</span><div><strong>Beziehungen</strong> — Kundengespräche, Verhandlungen, Vertrauen aufbauen</div></li>
+        </ul>
+      </div>
+    </div>
+    <div class="highlight">
+      <strong>Die richtige Einstellung:</strong> Claude ist ein sehr fähiger Assistent — kein Allwissender. Wer ihn als Werkzeug einsetzt und kritisch prüft, spart viel Zeit. Wer blind vertraut, riskiert Fehler.
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 8 · Wrap-up</span>
+  </div>
+</div>
+
+
+<!-- ===== F6: FRAGEN & DISKUSSION ===== -->
+<div class="slide" id="slide5">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 8 · Fragen</div>
+      <div class="slide-title">Offene Fragen & Diskussion</div>
+    </div>
+    <div class="slide-meta">Folie 6 / 7</div>
+  </div>
+  <div class="fragen-body">
+    <div style="font-size:56px;">💬</div>
+    <h2>Welche Fragen haben Sie?</h2>
+    <p class="fragen-sub">Was ist noch unklar? Was möchten Sie gerne noch ausprobieren? Gibt es etwas aus Ihrem konkreten Alltag, das wir gemeinsam anschauen sollen?</p>
+    <div class="fragen-kontakt">
+      <div class="fk-item">🔍 Etwas live ausprobieren?</div>
+      <div class="fk-item">📋 Einen konkreten Anwendungsfall zeigen?</div>
+      <div class="fk-item">⚙️ Eine Einstellung erklären?</div>
+    </div>
+    <div class="highlight" style="max-width:560px; text-align:left; margin-top:8px;">
+      <strong>Kein Follow-up nötig:</strong> Nach dem Workshop können Sie alles sofort selbst ausprobieren. Sie brauchen keine IT-Abteilung und keinen Techniker — einfach anmelden und loslegen.
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 8 · Wrap-up</span>
+  </div>
+</div>
+
+
+<!-- ===== F7: ABSCHLUSS ===== -->
+<div class="slide" id="slide6">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 8 · Abschluss</div>
+      <div class="slide-title">Danke & auf Wiedersehen</div>
+    </div>
+    <div class="slide-meta">Folie 7 / 7</div>
+  </div>
+  <div class="abschluss-body">
+    <div style="font-size:48px;">🏗️</div>
+    <h2>Vielen Dank für Ihre<br>Aufmerksamkeit!</h2>
+    <p>Sie haben heute gesehen, wie Claude echte Büroarbeit abnimmt — E-Mails, Protokolle, Dokumente, Formulare. Der einzige Unterschied zwischen heute und morgen: ob Sie es ausprobieren.</p>
+    <div class="abschluss-pills">
+      <div class="abschluss-pill">claude.ai — kostenlos starten</div>
+      <div class="abschluss-pill light">Pro-Plan: ca. 20 €/Monat — spart täglich Stunden</div>
+      <div class="abschluss-pill light">Teams-Plan für Abteilungen</div>
+    </div>
+    <div style="margin-top:12px; background:rgba(74,111,165,0.15); border-radius:6px; padding:10px 18px; font-size:13px; color:#e0e8f5; max-width:500px; text-align:center;">
+      <strong style="color:white;">Handout mit allen Prompts &amp; Links</strong> erhalten Sie gleich — damit Sie heute noch loslegen können.
+    </div>
+    <div style="margin-top:8px; font-size:12px; color:var(--text-light); font-style:italic;">
+      Grundstein Bau GmbH · Linz · Workshop „Claude im Büroalltag"
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 8 · Wrap-up</span>
+  </div>
+</div>
+
+
+<script>
+const total = 7;
+function goTo(n) {
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('slide' + n).classList.add('active');
+  document.getElementById('btn' + n).classList.add('active');
+}
+window.addEventListener('message', function(e) {
+  const active = document.querySelector('.slide.active');
+  const idx = active ? parseInt(active.id.replace('slide','')) : 0;
+  if (e.data === 'next' || e.data?.type === 'next') {
+    if (idx < total - 1) { goTo(idx + 1); }
+    else { window.parent.postMessage('blockEnd', '*'); }
+  } else if (e.data === 'prev' || e.data?.type === 'prev') {
+    if (idx > 0) { goTo(idx - 1); }
+    else { window.parent.postMessage('blockStart', '*'); }
+  }
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowRight' || e.key === ' ') {
+    e.preventDefault();
+    const active = document.querySelector('.slide.active');
+    const idx = active ? parseInt(active.id.replace('slide','')) : 0;
+    if (idx < total - 1) goTo(idx + 1);
+    else window.parent.postMessage('blockEnd', '*');
+  } else if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    const active = document.querySelector('.slide.active');
+    const idx = active ? parseInt(active.id.replace('slide','')) : 0;
+    if (idx > 0) goTo(idx - 1);
+    else window.parent.postMessage('blockStart', '*');
+  }
+});
+</script>
+</body>
+</html>

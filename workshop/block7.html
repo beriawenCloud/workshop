@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Block 7 – Dokumente &amp; Formulare | Claude-Workshop</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #f7f5f0;
+    --header-dark: #2b2b2b;
+    --accent: #4a6fa5;
+    --accent-light: #e8eef7;
+    --accent-mid: #7a9bc8;
+    --text-dark: #1e1e1e;
+    --text-mid: #4a4a4a;
+    --text-light: #7a7a7a;
+    --border: #ddd8cf;
+    --white: #ffffff;
+    --success: #3a7d5a;
+    --success-bg: #edf7f2;
+    --warn: #b5621a;
+    --warn-bg: #fff7ef;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'DM Sans',sans-serif; background:#3a3a3a; display:flex; flex-direction:column; align-items:center; padding:20px; gap:16px; min-height:100vh; }
+  .nav { display:flex; gap:6px; flex-wrap:wrap; justify-content:center; max-width:980px; }
+  .nav button { background:#555; color:#fff; border:none; padding:4px 9px; border-radius:4px; font-family:'DM Sans',sans-serif; font-size:10.5px; cursor:pointer; transition:background 0.2s; white-space:nowrap; }
+  .nav button:hover { background:var(--accent); }
+  .nav button.active { background:var(--accent); }
+
+  .slide { width:960px; max-width:100%; background:var(--cream); border-radius:4px; overflow:hidden; box-shadow:0 8px 40px rgba(0,0,0,0.45); display:none; flex-direction:column; min-height:540px; }
+  .slide.active { display:flex; }
+
+  .slide-header { background:var(--header-dark); color:var(--white); padding:16px 36px 14px; display:flex; justify-content:space-between; align-items:flex-end; }
+  .slide-header .block-label { font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent-mid); font-weight:500; }
+  .slide-header .slide-title { font-family:'DM Serif Display',serif; font-size:21px; line-height:1.25; margin-top:4px; }
+  .slide-header .slide-meta { font-size:11px; color:#999; text-align:right; line-height:1.6; }
+
+  .slide-body { flex:1; padding:24px 36px 18px; display:flex; flex-direction:column; gap:14px; }
+  .slide-footer { height:5px; background:var(--accent); }
+  .slide-footer-bar { height:26px; background:#f0ece4; border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; padding:0 36px; }
+  .slide-footer-bar span { font-size:10px; color:var(--text-light); letter-spacing:0.06em; }
+
+  .cols-2 { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  .cols-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
+
+  .card { background:var(--white); border:1px solid var(--border); border-radius:6px; padding:14px 16px; }
+  .card-accent { border-left:4px solid var(--accent); }
+  .card h3 { font-size:12px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:7px; }
+  .card p { font-size:13px; color:var(--text-mid); line-height:1.55; }
+
+  .highlight { background:var(--accent-light); border-left:4px solid var(--accent); border-radius:4px; padding:10px 14px; font-size:13px; color:var(--text-dark); line-height:1.55; }
+  .highlight.warn { background:var(--warn-bg); border-left-color:var(--warn); color:#6b3a10; }
+  .highlight.success { background:var(--success-bg); border-left-color:var(--success); color:#1f4d35; }
+  .trainer-box { background:#2b2b2b; border-radius:6px; padding:10px 14px; display:flex; gap:10px; align-items:flex-start; }
+  .trainer-box .t-badge { flex-shrink:0; background:var(--accent); color:white; font-size:10px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; padding:3px 8px; border-radius:3px; margin-top:1px; }
+  .trainer-box .t-text { font-size:12px; color:#ccc; line-height:1.5; }
+
+  .icon-list { list-style:none; display:flex; flex-direction:column; gap:7px; }
+  .icon-list li { display:flex; align-items:flex-start; gap:9px; font-size:13px; color:var(--text-mid); line-height:1.4; }
+  .icon-list li .ico { flex-shrink:0; width:20px; height:20px; border-radius:50%; background:var(--accent-light); display:flex; align-items:center; justify-content:center; font-size:11px; margin-top:1px; }
+  .icon-list li strong { color:var(--text-dark); }
+
+  .step-list { list-style:none; display:flex; flex-direction:column; gap:8px; }
+  .step-list li { display:flex; align-items:flex-start; gap:10px; font-size:13px; color:var(--text-mid); line-height:1.4; }
+  .step-num { flex-shrink:0; width:22px; height:22px; border-radius:50%; background:var(--accent); color:white; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+
+  .section-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--accent); border-bottom:2px solid var(--accent-light); padding-bottom:3px; margin-bottom:4px; }
+
+  .title-body { flex:1; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:14px; padding:32px 48px; text-align:center; }
+  .block-badge { background:var(--accent); color:white; font-size:12px; font-weight:600; padding:5px 16px; border-radius:20px; letter-spacing:0.06em; text-transform:uppercase; }
+  .title-body h1 { font-family:'DM Serif Display',serif; font-size:36px; color:var(--text-dark); line-height:1.2; }
+  .title-body .sub { font-size:14px; color:var(--text-mid); max-width:540px; line-height:1.55; }
+  .time-pill { display:inline-flex; align-items:center; gap:6px; background:#f0ece4; border:1px solid var(--border); padding:5px 14px; border-radius:20px; font-size:12px; color:var(--text-mid); }
+
+  .prompt-box { background:#1e1e1e; border-radius:6px; padding:12px 15px; font-size:12px; color:#d4e0f0; line-height:1.6; font-family:monospace; }
+
+  .flow-row { display:flex; align-items:center; gap:0; flex-wrap:nowrap; }
+  .flow-step { flex:1; background:var(--white); border:1px solid var(--border); border-radius:6px; padding:10px 10px; text-align:center; font-size:12px; color:var(--text-mid); line-height:1.4; }
+  .flow-step .fs-icon { font-size:18px; display:block; margin-bottom:4px; }
+  .flow-step .fs-label { font-size:10px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:0.06em; }
+  .flow-arrow { flex-shrink:0; font-size:18px; color:var(--accent-mid); padding:0 6px; }
+
+  /* Vorlage-Grid */
+  .vorlage-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  .vorlage-card { background:var(--white); border:1px solid var(--border); border-radius:6px; padding:12px 14px; display:flex; align-items:center; gap:10px; }
+  .vorlage-card .v-icon { font-size:20px; flex-shrink:0; }
+  .vorlage-card .v-name { font-size:13px; font-weight:600; color:var(--text-dark); }
+  .vorlage-card .v-desc { font-size:11px; color:var(--text-light); margin-top:2px; }
+
+  /* Mock-Dokument */
+  .mock-doc { background:white; border:1px solid var(--border); border-radius:6px; padding:14px 18px; font-size:12px; line-height:1.55; }
+  .mock-doc .doc-header { border-bottom:2px solid var(--header-dark); padding-bottom:8px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:flex-end; }
+  .mock-doc .doc-company { font-family:'DM Serif Display',serif; font-size:14px; font-weight:700; color:var(--header-dark); }
+  .mock-doc .doc-sub { font-size:10px; color:var(--text-light); }
+  .mock-doc .doc-recipient { margin-bottom:8px; color:var(--text-mid); }
+  .mock-doc .doc-subject { font-weight:700; color:var(--text-dark); margin-bottom:6px; }
+  .mock-doc .doc-body { color:var(--text-mid); }
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <button onclick="goTo(0)" id="btn0" class="active">① Titel</button>
+  <button onclick="goTo(1)" id="btn1">② Das Problem</button>
+  <button onclick="goTo(2)" id="btn2">③ Word erstellen</button>
+  <button onclick="goTo(3)" id="btn3">④ PDF exportieren</button>
+  <button onclick="goTo(4)" id="btn4">⑤ Briefkopf &amp; Format.</button>
+  <button onclick="goTo(5)" id="btn5">⑥ Vorlagen anlegen</button>
+  <button onclick="goTo(6)" id="btn6">⑦ Vorlagen in Proj.</button>
+  <button onclick="goTo(7)" id="btn7">⑧ Serientexte</button>
+  <button onclick="goTo(8)" id="btn8">⑨ Cowork-Workflow</button>
+</div>
+
+<!-- FOLIE 1 -->
+<div class="slide active" id="slide0">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 7 · Dokumente &amp; Formulare</div>
+      <div class="slide-title">Dokumente &amp; Formulare schnell erstellen</div>
+    </div>
+    <div class="slide-meta">Folie 1 / 9</div>
+  </div>
+  <div class="title-body">
+    <div class="block-badge">Block 7</div>
+    <h1>Dokumente &amp; Formulare schnell erstellen</h1>
+    <p class="sub">Claude erstellt fertige Word-Dokumente und PDFs — mit Briefkopf, Formatierung und wiederverwendbaren Vorlagen.</p>
+    <div class="time-pill">⏱ 20 Minuten</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 7 · Dokumente &amp; Formulare</span>
+  </div>
+</div>
+
+<!-- FOLIE 2 -->
+<div class="slide" id="slide1">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 7 · Dokumente &amp; Formulare</div>
+      <div class="slide-title">Kennen Sie das?</div>
+    </div>
+    <div class="slide-meta">Folie 2 / 9</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-3">
+      <div class="card card-accent">
+        <h3>Immer von vorne</h3>
+        <p>Neues Dokument, neue Formatierung, neuer Briefkopf — obwohl es letzte Woche schon fertig war.</p>
+      </div>
+      <div class="card card-accent">
+        <h3>Vorlage suchen</h3>
+        <p>Wo war die Auftragsbestätigung nochmal? Unter welchem Namen war die gespeichert?</p>
+      </div>
+      <div class="card card-accent">
+        <h3>Immer wieder anpassen</h3>
+        <p>Name, Datum, Betrag tauschen — und dabei immer wieder Formatierung korrigieren.</p>
+      </div>
+    </div>
+    <div class="flow-row" style="margin-top:4px;">
+      <div class="flow-step"><span class="fs-icon">💬</span><div class="fs-label">Schritt 1</div>Auftrag geben</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><span class="fs-icon">⚙️</span><div class="fs-label">Schritt 2</div>Claude arbeitet</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><span class="fs-icon">📄</span><div class="fs-label">Schritt 3</div>Datei fertig</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><span class="fs-icon">✉️</span><div class="fs-label">Schritt 4</div>Versenden</div>
+    </div>
+    <div class="highlight success">Mit Claude: Vorlage einmal hinterlegen — Claude füllt aus, formatiert, gibt als Word oder PDF aus.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 7 · Dokumente &amp; Formulare</span>
+  </div>
+</div>
+
+<!-- FOLIE 3 -->
+<div class="slide" id="slide2">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 7 · Dokumente &amp; Formulare</div>
+      <div class="slide-title">📝 Word-Dokument erstellen lassen</div>
+    </div>
+    <div class="slide-meta">Folie 3 / 9</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">So funktioniert es</div>
+        <ol class="step-list" style="margin-top:8px;">
+          <li><span class="step-num">1</span><span>Auftrag in natürlicher Sprache geben</span></li>
+          <li><span class="step-num">2</span><span>Claude erstellt das Dokument mit Struktur und Formatierung</span></li>
+          <li><span class="step-num">3</span><span>Mit Cowork: direkt als .docx-Datei gespeichert</span></li>
+        </ol>
+        <div class="highlight success" style="margin-top:10px;">Claude erstellt die .docx-Datei sofort verwendbar.</div>
+      </div>
+      <div>
+        <div class="section-label">Beispiel-Prompt</div>
+        <div class="prompt-box" style="margin-top:8px;font-size:11px;">
+          "Erstell eine Auftragsbestätigung als Word-Datei.<br><br>
+          Auftraggeber: Stadtgemeinde Linz<br>
+          Leistung: Pflasterarbeiten Rathausplatz<br>
+          Auftragssumme: € 38.500,–<br>
+          Zeitraum: Juni – Juli 2025<br><br>
+          Mit Briefkopf Grundstein Bau GmbH,<br>
+          Industriestraße 12, 4020 Linz.<br>
+          Professioneller, verbindlicher Ton."
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 7 · Dokumente &amp; Formulare</span>
+  </div>
+</div>
+
+<!-- FOLIE 4 -->
+<div class="slide" id="slide3">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 7 · Dokumente &amp; Formulare</div>
+      <div class="slide-title">🖨️ Direkt als PDF ausgeben</div>
+    </div>
+    <div class="slide-meta">Folie 4 / 9</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Wann PDF sinnvoll ist</div>
+        <ul class="icon-list" style="margin-top:8px;">
+          <li><span class="ico">🔒</span><span><strong>Nicht veränderbar:</strong> Kunde kann Inhalt nicht bearbeiten</span></li>
+          <li><span class="ico">✉️</span><span><strong>Versenden:</strong> Universell lesbar, kein Word nötig</span></li>
+          <li><span class="ico">🖨️</span><span><strong>Drucken:</strong> Layout bleibt wie erstellt</span></li>
+          <li><span class="ico">📁</span><span><strong>Archivieren:</strong> Langzeitspeicherung in einheitlichem Format</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="section-label">3 Prompt-Varianten</div>
+        <ol class="step-list" style="margin-top:8px;">
+          <li><span class="step-num">1</span><span><strong>Direkt als PDF:</strong> "Erstell eine Auftragsbestätigung und speichere als PDF"</span></li>
+          <li><span class="step-num">2</span><span><strong>Word + PDF:</strong> "Erstell als Word und exportiere auch als PDF in denselben Ordner"</span></li>
+          <li><span class="step-num">3</span><span><strong>Bestehende Datei:</strong> "Wandle diese Word-Datei in ein PDF um"</span></li>
+        </ol>
+      </div>
+    </div>
+    <div class="highlight warn">Word = noch ändern. PDF = fertig und weitergeben.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 7 · Dokumente &amp; Formulare</span>
+  </div>
+</div>
+
+<!-- FOLIE 5 -->
+<div class="slide" id="slide4">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 7 · Dokumente &amp; Formulare</div>
+      <div class="slide-title">🏢 Briefkopf &amp; einheitliche Formatierung</div>
+    </div>
+    <div class="slide-meta">Folie 5 / 9</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Was Claude formatieren kann</div>
+        <ul class="icon-list" style="margin-top:8px;">
+          <li><span class="ico">🏢</span><span>Briefkopf mit Logo-Platzhalter, Adresse, Kontakt</span></li>
+          <li><span class="ico">📐</span><span>Einheitliche Schrift, Abstände, Überschriften</span></li>
+          <li><span class="ico">📑</span><span>Seitennummerierung und Fußzeilen</span></li>
+          <li><span class="ico">📊</span><span>Tabellen in einheitlichem Stil</span></li>
+          <li><span class="ico">🖊️</span><span>Unterschriftsfelder und Datumszeilen</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="section-label">Beispiel-Dokument</div>
+        <div class="mock-doc" style="margin-top:8px;">
+          <div class="doc-header">
+            <div>
+              <div class="doc-company">GRUNDSTEIN BAU GMBH</div>
+              <div class="doc-sub">Industriestraße 12 · 4020 Linz · +43 732 123456</div>
+            </div>
+            <div style="font-size:10px;color:var(--text-light);text-align:right;">Linz, 18.05.2025<br>Nr. 2025-047</div>
+          </div>
+          <div class="doc-recipient">Stadtgemeinde Linz<br>Hauptplatz 1, 4020 Linz</div>
+          <div class="doc-subject">Auftragsbestätigung — Pflasterarbeiten Rathausplatz</div>
+          <div class="doc-body">Sehr geehrte Damen und Herren, wir bestätigen hiermit den Auftrag für die Pflasterarbeiten am Rathausplatz im Zeitraum Juni–Juli 2025 in Höhe von € 38.500,–...</div>
+        </div>
+      </div>
+    </div>
+    <div class="highlight">Briefkopf-Text einmal in Projektanweisungen speichern — Claude fügt ihn automatisch ein.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 7 · Dokumente &amp; Formulare</span>
+  </div>
+</div>
+
+<!-- FOLIE 6 -->
+<div class="slide" id="slide5">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 7 · Dokumente &amp; Formulare</div>
+      <div class="slide-title">📁 Vorlagen anlegen — einmal, immer wieder nutzen</div>
+    </div>
+    <div class="slide-meta">Folie 6 / 9</div>
+  </div>
+  <div class="slide-body">
+    <div class="vorlage-grid">
+      <div class="vorlage-card">
+        <div class="v-icon">📄</div>
+        <div><div class="v-name">Auftragsbestätigung</div><div class="v-desc">Mit Briefkopf, Leistung, Betrag, Datum</div></div>
+      </div>
+      <div class="vorlage-card">
+        <div class="v-icon">✅</div>
+        <div><div class="v-name">Abnahmeprotokoll</div><div class="v-desc">ÖNORM-konform, mit Prüfpunkten</div></div>
+      </div>
+      <div class="vorlage-card">
+        <div class="v-icon">💰</div>
+        <div><div class="v-name">Angebot</div><div class="v-desc">Mit Positionen, Einheitspreisen, Gesamt</div></div>
+      </div>
+      <div class="vorlage-card">
+        <div class="v-icon">⚠️</div>
+        <div><div class="v-name">Mahnung</div><div class="v-desc">1. / 2. / letzte Mahnung — abgestuft</div></div>
+      </div>
+      <div class="vorlage-card">
+        <div class="v-icon">📊</div>
+        <div><div class="v-name">Wochenbericht</div><div class="v-desc">Baustelle, Fortschritt, offene Punkte</div></div>
+      </div>
+      <div class="vorlage-card">
+        <div class="v-icon">🦺</div>
+        <div><div class="v-name">Sicherheitscheckliste</div><div class="v-desc">AUVA-konform, für Baustellenbegehung</div></div>
+      </div>
+    </div>
+    <div class="highlight">Vorlagen in Projektanweisungen hinterlegen → Claude hat sie immer parat.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 7 · Dokumente &amp; Formulare</span>
+  </div>
+</div>
+
+<!-- FOLIE 7 -->
+<div class="slide" id="slide6">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 7 · Dokumente &amp; Formulare</div>
+      <div class="slide-title">💾 Vorlagen in Projekten dauerhaft speichern</div>
+    </div>
+    <div class="slide-meta">Folie 7 / 9</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">4 Schritte</div>
+        <ol class="step-list" style="margin-top:8px;">
+          <li><span class="step-num">1</span><span>Projekt anlegen (z.B. "Schriftverkehr Grundstein Bau")</span></li>
+          <li><span class="step-num">2</span><span>Projektanweisung schreiben: Briefkopf, Ton, Standardinfos</span></li>
+          <li><span class="step-num">3</span><span>Vorlage-Dateien hochladen (z.B. Auftragsbestätigung.docx)</span></li>
+          <li><span class="step-num">4</span><span>Claude kennt alle Vorlagen und füllt sie auf Wunsch aus</span></li>
+        </ol>
+      </div>
+      <div>
+        <div class="section-label">Beispiel-Projektanweisung</div>
+        <div class="prompt-box" style="margin-top:8px;font-size:11px;">
+          "Du hilfst beim Schriftverkehr der Grundstein Bau GmbH.<br><br>
+          Briefkopf:<br>
+          Grundstein Bau GmbH<br>
+          Industriestraße 12, 4020 Linz<br>
+          Tel +43 732 123456<br>
+          office@grundstein-bau.at<br><br>
+          Ton: professionell, österreichisches Deutsch.<br>
+          Ausgabe: immer als Word-Datei (.docx),<br>
+          auf Wunsch auch als PDF."
+        </div>
+      </div>
+    </div>
+    <div class="highlight success">Einmal eingerichtet — jeder neue Chat im Projekt startet mit diesem Wissen.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 7 · Dokumente &amp; Formulare</span>
+  </div>
+</div>
+
+<!-- FOLIE 8 -->
+<div class="slide" id="slide7">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 7 · Dokumente &amp; Formulare</div>
+      <div class="slide-title">🔄 Serientexte — dasselbe Dokument, viele Empfänger</div>
+    </div>
+    <div class="slide-meta">Folie 8 / 9</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Wann sinnvoll</div>
+        <ul class="icon-list" style="margin-top:8px;">
+          <li><span class="ico">👥</span><span>Gleicher Brief, verschiedene Empfänger</span></li>
+          <li><span class="ico">📧</span><span>Lieferanten-Rundschreiben mit individuellen Daten</span></li>
+          <li><span class="ico">📋</span><span>Einladungen an mehrere Teilnehmer</span></li>
+          <li><span class="ico">💰</span><span>Angebote für mehrere Kunden aus einer Liste</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="section-label">Beispiel-Prompt</div>
+        <div class="prompt-box" style="margin-top:8px;font-size:11px;">
+          "Erstell für jeden dieser 3 Lieferanten eine eigene Auftragsbestätigung als Word-Datei:<br><br>
+          1. Holzbau Müller GmbH — 50 Kanthölzer, € 2.400,–<br>
+          2. Stahlbau Krenn KG — 10 Stahlträger, € 8.900,–<br>
+          3. Beton &amp; Bau AG — 20m³ Beton C25, € 3.200,–<br><br>
+          Alle mit unserem Briefkopf, Liefertermin 30.05.2025."
+        </div>
+      </div>
+    </div>
+    <div class="highlight success">3 fertige Word-Dateien — was früher 30 Minuten dauerte, geht jetzt in 2 Minuten.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 7 · Dokumente &amp; Formulare</span>
+  </div>
+</div>
+
+<!-- FOLIE 9 -->
+<div class="slide" id="slide8">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 7 · Dokumente &amp; Formulare</div>
+      <div class="slide-title">⚙️ Der komplette Workflow mit Cowork</div>
+    </div>
+    <div class="slide-meta">Folie 9 / 9</div>
+  </div>
+  <div class="slide-body">
+    <div class="flow-row" style="margin-bottom:4px;">
+      <div class="flow-step"><span class="fs-icon">📂</span><div class="fs-label">Schritt 1</div>Ordner wählen:<br>"Schriftverkehr 2025"</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><span class="fs-icon">💬</span><div class="fs-label">Schritt 2</div>Auftrag geben:<br>Inhalt, Empfänger, Format</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><span class="fs-icon">⚙️</span><div class="fs-label">Schritt 3</div>Claude arbeitet:<br>erstellt, formatiert</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><span class="fs-icon">✅</span><div class="fs-label">Schritt 4</div>Fertig:<br>Datei im Ordner</div>
+    </div>
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Was Cowork zusätzlich kann</div>
+        <ul class="icon-list" style="margin-top:8px;">
+          <li><span class="ico">📝</span><span>Mehrere Dateien auf einmal umbenennen</span></li>
+          <li><span class="ico">📄</span><span>Alle PDFs in einem Ordner zusammenführen</span></li>
+          <li><span class="ico">🗂️</span><span>Dateien nach Schema sortieren und verschieben</span></li>
+          <li><span class="ico">🔄</span><span>Word-Dateien batch-weise in PDF umwandeln</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="card card-accent">
+          <h3>Was Sie brauchen</h3>
+          <ul class="icon-list" style="margin-top:4px;">
+            <li><span class="ico">⬇️</span><span>Claude Desktop App (claude.ai/download)</span></li>
+            <li><span class="ico">⭐</span><span>Pro-Plan aktiv</span></li>
+            <li><span class="ico">📂</span><span>Ordner einmalig freigeben</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="highlight warn">Prüfen Sie das Ergebnis kurz, bevor Sie es weiterleiten.</div>
+    <div class="trainer-box">
+      <span class="t-badge">Trainer · Live-Demo</span>
+      <div class="t-text">Diesen Workflow abschließend live zeigen: Auftragsbestätigung in Echtzeit erstellen lassen, Datei im Ordner zeigen. Teilnehmer schauen zu — demonstriert den kompletten Pro-Plan-Vorteil als starker Abschluss des Blocks.</div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 7 · Dokumente &amp; Formulare</span>
+  </div>
+</div>
+
+<script>
+const total = 9;
+function goTo(n) {
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('slide' + n).classList.add('active');
+  document.getElementById('btn' + n).classList.add('active');
+}
+window.addEventListener('message', function(e) {
+  const active = document.querySelector('.slide.active');
+  const idx = active ? parseInt(active.id.replace('slide','')) : 0;
+  if (e.data === 'next' || e.data?.type === 'next') {
+    if (idx < total - 1) { goTo(idx + 1); }
+    else { window.parent.postMessage('blockEnd', '*'); }
+  } else if (e.data === 'prev' || e.data?.type === 'prev') {
+    if (idx > 0) { goTo(idx - 1); }
+    else { window.parent.postMessage('blockStart', '*'); }
+  }
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowRight' || e.key === ' ') {
+    e.preventDefault();
+    const active = document.querySelector('.slide.active');
+    const idx = active ? parseInt(active.id.replace('slide','')) : 0;
+    if (idx < total - 1) goTo(idx + 1);
+    else window.parent.postMessage('blockEnd', '*');
+  } else if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    const active = document.querySelector('.slide.active');
+    const idx = active ? parseInt(active.id.replace('slide','')) : 0;
+    if (idx > 0) goTo(idx - 1);
+    else window.parent.postMessage('blockStart', '*');
+  }
+});
+</script>
+</body>
+</html>

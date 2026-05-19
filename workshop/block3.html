@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Block 3 – Prompts schreiben | Claude-Workshop</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #f7f5f0;
+    --header-dark: #2b2b2b;
+    --accent: #4a6fa5;
+    --accent-light: #e8eef7;
+    --accent-mid: #7a9bc8;
+    --text-dark: #1e1e1e;
+    --text-mid: #4a4a4a;
+    --text-light: #7a7a7a;
+    --border: #ddd8cf;
+    --white: #ffffff;
+    --success: #3a7d5a;
+    --success-bg: #edf7f2;
+    --warn: #b5621a;
+    --warn-bg: #fff7ef;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'DM Sans',sans-serif; background:#3a3a3a; display:flex; flex-direction:column; align-items:center; padding:20px; gap:16px; min-height:100vh; }
+  .nav { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; max-width:980px; }
+  .nav button { background:#555; color:#fff; border:none; padding:5px 11px; border-radius:4px; font-family:'DM Sans',sans-serif; font-size:11px; cursor:pointer; transition:background 0.2s; white-space:nowrap; }
+  .nav button:hover { background:var(--accent); }
+  .nav button.active { background:var(--accent); }
+
+  .slide { width:960px; max-width:100%; background:var(--cream); border-radius:4px; overflow:hidden; box-shadow:0 8px 40px rgba(0,0,0,0.45); display:none; flex-direction:column; min-height:540px; }
+  .slide.active { display:flex; }
+
+  .slide-header { background:var(--header-dark); color:var(--white); padding:16px 36px 14px; display:flex; justify-content:space-between; align-items:flex-end; }
+  .slide-header .block-label { font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent-mid); font-weight:500; }
+  .slide-header .slide-title { font-family:'DM Serif Display',serif; font-size:21px; line-height:1.25; margin-top:4px; }
+  .slide-header .slide-meta { font-size:11px; color:#999; text-align:right; line-height:1.6; }
+
+  .slide-body { flex:1; padding:24px 36px 18px; display:flex; flex-direction:column; gap:14px; }
+  .slide-footer { height:5px; background:var(--accent); }
+  .slide-footer-bar { height:26px; background:#f0ece4; border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; padding:0 36px; }
+  .slide-footer-bar span { font-size:10px; color:var(--text-light); letter-spacing:0.06em; }
+
+  .cols-2 { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  .cols-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
+  .cols-2x2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+
+  .card { background:var(--white); border:1px solid var(--border); border-radius:6px; padding:14px 16px; }
+  .card-accent { border-left:4px solid var(--accent); }
+  .card h3 { font-size:12px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:7px; }
+  .card p { font-size:13px; color:var(--text-mid); line-height:1.55; }
+
+  .highlight { background:var(--accent-light); border-left:4px solid var(--accent); border-radius:4px; padding:10px 14px; font-size:13px; color:var(--text-dark); line-height:1.55; }
+  .highlight.warn { background:var(--warn-bg); border-left-color:var(--warn); color:#6b3a10; }
+  .highlight.success { background:var(--success-bg); border-left-color:var(--success); color:#1f4d35; }
+
+  .icon-list { list-style:none; display:flex; flex-direction:column; gap:8px; }
+  .icon-list li { display:flex; align-items:flex-start; gap:9px; font-size:13px; color:var(--text-mid); line-height:1.45; }
+  .icon-list li .ico { flex-shrink:0; width:20px; height:20px; border-radius:50%; background:var(--accent-light); display:flex; align-items:center; justify-content:center; font-size:11px; margin-top:1px; }
+  .icon-list li .ico.green { background:var(--success-bg); color:var(--success); }
+  .icon-list li strong { color:var(--text-dark); }
+
+  .step-list { list-style:none; display:flex; flex-direction:column; gap:9px; }
+  .step-list li { display:flex; align-items:flex-start; gap:10px; font-size:13px; color:var(--text-mid); line-height:1.45; }
+  .step-num { flex-shrink:0; width:22px; height:22px; border-radius:50%; background:var(--accent); color:white; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+
+  .section-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--accent); border-bottom:2px solid var(--accent-light); padding-bottom:3px; margin-bottom:4px; }
+
+  .title-body { flex:1; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:14px; padding:32px 48px; text-align:center; }
+  .block-badge { background:var(--accent); color:white; font-size:12px; font-weight:600; padding:5px 16px; border-radius:20px; letter-spacing:0.06em; text-transform:uppercase; }
+  .title-body h1 { font-family:'DM Serif Display',serif; font-size:36px; color:var(--text-dark); line-height:1.2; }
+  .title-body .sub { font-size:14px; color:var(--text-mid); max-width:520px; line-height:1.55; }
+  .time-pill { display:inline-flex; align-items:center; gap:6px; background:#f0ece4; border:1px solid var(--border); padding:5px 14px; border-radius:20px; font-size:12px; color:var(--text-mid); }
+
+  .prompt-box { background:#1e1e1e; border-radius:6px; padding:13px 16px; font-size:12.5px; color:#d4e0f0; line-height:1.6; font-family:monospace; }
+
+  .ba-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .ba-col { border-radius:6px; padding:12px 14px; }
+  .ba-col.before { background:#fff0ec; border:1px solid #f0c8b0; }
+  .ba-col.after { background:var(--success-bg); border:1px solid #b0d4c0; }
+  .ba-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px; }
+  .ba-col.before .ba-label { color:var(--warn); }
+  .ba-col.after .ba-label { color:var(--success); }
+  .ba-col p { font-size:13px; line-height:1.5; color:var(--text-dark); }
+
+  .mock-chat { display:flex; flex-direction:column; gap:8px; background:white; border:1px solid var(--border); border-radius:6px; padding:12px; }
+  .mock-bubble { max-width:85%; padding:8px 11px; border-radius:8px; font-size:12px; line-height:1.45; color:var(--text-dark); }
+  .mock-bubble.user { background:var(--accent); color:white; border-radius:8px 8px 2px 8px; align-self:flex-end; }
+  .mock-bubble.claude { background:#f0ece4; border-radius:8px 8px 8px 2px; align-self:flex-start; }
+
+  .ingredient-card { background:var(--white); border:2px solid var(--accent-light); border-radius:8px; padding:14px 16px; }
+  .ingredient-card h3 { font-family:'DM Serif Display',serif; font-size:16px; color:var(--text-dark); margin-bottom:4px; }
+  .ingredient-card .sub { font-size:11px; color:var(--accent); font-weight:600; text-transform:uppercase; letter-spacing:0.07em; margin-bottom:8px; }
+  .ingredient-card p { font-size:12.5px; color:var(--text-mid); line-height:1.5; }
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <button onclick="goTo(0)" id="btn0" class="active">① Titel</button>
+  <button onclick="goTo(1)" id="btn1">② Was ist ein Prompt?</button>
+  <button onclick="goTo(2)" id="btn2">③ Schlechter Prompt</button>
+  <button onclick="goTo(3)" id="btn3">④ Guter Prompt</button>
+  <button onclick="goTo(4)" id="btn4">⑤ Die 4 Zutaten</button>
+  <button onclick="goTo(5)" id="btn5">⑥ Rolle</button>
+  <button onclick="goTo(6)" id="btn6">⑦ Kontext</button>
+  <button onclick="goTo(7)" id="btn7">⑧ Ziel</button>
+  <button onclick="goTo(8)" id="btn8">⑨ Format</button>
+  <button onclick="goTo(9)" id="btn9">⑩ Nachfassen</button>
+  <button onclick="goTo(10)" id="btn10">⑪ Spickzettel</button>
+</div>
+
+<!-- FOLIE 1 -->
+<div class="slide active" id="slide0">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 3 · Prompts schreiben</div>
+      <div class="slide-title">Prompts schreiben — der Einstieg</div>
+    </div>
+    <div class="slide-meta">Folie 1 / 11</div>
+  </div>
+  <div class="title-body">
+    <div class="block-badge">Block 3</div>
+    <h1>Prompts schreiben</h1>
+    <p class="sub">Der Unterschied zwischen einer vagen Frage und einem präzisen Auftrag — und warum das so viel ausmacht.</p>
+    <div class="time-pill">⏱ 30 Minuten</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 3 · Prompts schreiben</span>
+  </div>
+</div>
+
+<!-- FOLIE 2 -->
+<div class="slide" id="slide1">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 3 · Prompts schreiben</div>
+      <div class="slide-title">Was ist ein Prompt — und warum ist er wichtig?</div>
+    </div>
+    <div class="slide-meta">Folie 2 / 11</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Ein Prompt ist...</div>
+        <ul class="icon-list" style="margin-top:8px;">
+          <li><span class="ico">💬</span><span>Die Eingabe, die Sie Claude schicken</span></li>
+          <li><span class="ico">📝</span><span>Eine Frage, ein Auftrag oder eine Beschreibung</span></li>
+          <li><span class="ico">🎯</span><span>Der wichtigste Hebel für gute Ergebnisse</span></li>
+          <li><span class="ico">⭐</span><span>Je klarer der Prompt, desto besser die Antwort</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="card card-accent">
+          <h3>Wie ein neuer Mitarbeiter</h3>
+          <p>Stellen Sie sich vor, Sie haben ab heute eine neue, sehr intelligente Assistentin. Sie kennt Ihr Unternehmen noch nicht, hat keinen Kontext und kann nur das umsetzen, was Sie ihr sagen. Je genauer Ihre Anweisung, desto besser das Ergebnis.</p>
+        </div>
+      </div>
+    </div>
+    <div class="highlight">Claude ist kein Gedankenleser. Was Sie nicht sagen, muss er raten — und das geht oft schief.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 3 · Prompts schreiben</span>
+  </div>
+</div>
+
+<!-- FOLIE 3 -->
+<div class="slide" id="slide2">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 3 · Prompts schreiben</div>
+      <div class="slide-title">❌ Was passiert bei einem schlechten Prompt?</div>
+    </div>
+    <div class="slide-meta">Folie 3 / 11</div>
+  </div>
+  <div class="slide-body">
+    <div class="ba-row">
+      <div class="ba-col before">
+        <div class="ba-label">Vager Prompt</div>
+        <p style="font-family:monospace;font-size:14px;">"Schreib eine E-Mail"</p>
+      </div>
+      <div class="ba-col after">
+        <div class="ba-label">Claudes Problem</div>
+        <p>Claude weiß nicht: An wen? Über was? Welcher Ton? Wie lang? Formell oder locker? → Ergebnis: Eine generische E-Mail, die Sie komplett umschreiben müssen.</p>
+      </div>
+    </div>
+    <div class="cols-3">
+      <div class="card card-accent">
+        <h3>Kein Empfänger</h3>
+        <p>"E-Mail schreiben" — wer bekommt sie? Kunde, Lieferant, Kollege?</p>
+      </div>
+      <div class="card card-accent">
+        <h3>Kein Thema</h3>
+        <p>Was soll die E-Mail sagen? Was ist der Anlass?</p>
+      </div>
+      <div class="card card-accent">
+        <h3>Kein Ton</h3>
+        <p>Formell? Freundlich? Dringend? Kurz oder ausführlich?</p>
+      </div>
+    </div>
+    <div class="highlight warn">Ein schlechter Prompt kostet mehr Zeit als er spart — man schreibt am Ende selbst.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 3 · Prompts schreiben</span>
+  </div>
+</div>
+
+<!-- FOLIE 4 -->
+<div class="slide" id="slide3">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 3 · Prompts schreiben</div>
+      <div class="slide-title">✅ So sieht ein guter Prompt aus</div>
+    </div>
+    <div class="slide-meta">Folie 4 / 11</div>
+  </div>
+  <div class="slide-body">
+    <div class="prompt-box" style="font-size:13px;">
+      "Schreib eine kurze, professionelle E-Mail an unseren Lieferanten Holzbau Müller GmbH. Wir bestätigen die Lieferung von 200 Dachziegeln für Montag, 20. Mai. Ton: freundlich und verbindlich. Nicht länger als 5 Sätze."
+    </div>
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Was dieser Prompt enthält</div>
+        <ul class="icon-list" style="margin-top:8px;">
+          <li><span class="ico green">✓</span><span><strong>Empfänger:</strong> Holzbau Müller GmbH</span></li>
+          <li><span class="ico green">✓</span><span><strong>Thema:</strong> Lieferbestätigung, 200 Dachziegel, 20. Mai</span></li>
+          <li><span class="ico green">✓</span><span><strong>Ton:</strong> freundlich und verbindlich</span></li>
+          <li><span class="ico green">✓</span><span><strong>Länge:</strong> max. 5 Sätze</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="section-label">Ergebnis</div>
+        <div class="mock-chat" style="margin-top:8px;">
+          <div class="mock-bubble claude">Sehr geehrte Damen und Herren, wir freuen uns, die Lieferung von 200 Dachziegeln für Montag, den 20. Mai, zu bestätigen. Bitte halten Sie den vereinbarten Liefertermin ein. Bei Fragen stehen wir gerne zur Verfügung. Mit freundlichen Grüßen, Grundstein Bau GmbH</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 3 · Prompts schreiben</span>
+  </div>
+</div>
+
+<!-- FOLIE 5 -->
+<div class="slide" id="slide4">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 3 · Prompts schreiben</div>
+      <div class="slide-title">Die 4 Zutaten eines guten Prompts</div>
+    </div>
+    <div class="slide-meta">Folie 5 / 11</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2x2">
+      <div class="ingredient-card">
+        <div class="sub">Zutat 1</div>
+        <h3>👤 Rolle</h3>
+        <p>"Wer soll Claude sein?" — Experte, Assistent, Übersetzer, Texter</p>
+      </div>
+      <div class="ingredient-card">
+        <div class="sub">Zutat 2</div>
+        <h3>📋 Kontext</h3>
+        <p>"Was ist die Situation?" — Unternehmen, Empfänger, Vorgeschichte</p>
+      </div>
+      <div class="ingredient-card">
+        <div class="sub">Zutat 3</div>
+        <h3>🎯 Ziel</h3>
+        <p>"Was soll das Ergebnis sein?" — E-Mail, Zusammenfassung, Liste, Tabelle</p>
+      </div>
+      <div class="ingredient-card">
+        <div class="sub">Zutat 4</div>
+        <h3>📐 Format</h3>
+        <p>"Wie soll es aussehen?" — Länge, Ton, Sprache, Struktur</p>
+      </div>
+    </div>
+    <div class="highlight success">Nicht alle 4 sind immer nötig — aber je mehr davon vorhanden, desto besser das Ergebnis.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 3 · Prompts schreiben</span>
+  </div>
+</div>
+
+<!-- FOLIE 6 -->
+<div class="slide" id="slide5">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 3 · Prompts schreiben</div>
+      <div class="slide-title">👤 Zutat 1: Rolle — wer soll Claude sein?</div>
+    </div>
+    <div class="slide-meta">Folie 6 / 11</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Was eine Rolle bewirkt</div>
+        <ul class="icon-list" style="margin-top:8px;">
+          <li><span class="ico">🎭</span><span>Claude passt Ton, Fachtiefe und Stil an die Rolle an</span></li>
+          <li><span class="ico">⚖️</span><span>Ein "Rechtsanwalt" schreibt anders als ein "freundlicher Assistent"</span></li>
+          <li><span class="ico">🔧</span><span>Rollen müssen nicht realistisch sein — sie steuern die Ausgabe</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="section-label">Beispiele</div>
+        <ol class="step-list" style="margin-top:8px;">
+          <li><span class="step-num">1</span><span>"Als erfahrener Geschäftskorrespondenz-Experte..." → Formelle, präzise Briefe</span></li>
+          <li><span class="step-num">2</span><span>"Als hilfsbereite Kollegin..." → Locker, direkt, unkompliziert</span></li>
+          <li><span class="step-num">3</span><span>"Als Übersetzer für Baufachsprache..." → Präzise Fachterminologie</span></li>
+          <li><span class="step-num">4</span><span>"Du bist meine persönliche Assistentin..." → Angepasst an Ihre Bedürfnisse</span></li>
+        </ol>
+      </div>
+    </div>
+    <div class="highlight warn">Optional — viele Prompts funktionieren auch ohne explizite Rolle. Hilfreich bei spezifischen Stilen oder Fachgebieten.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 3 · Prompts schreiben</span>
+  </div>
+</div>
+
+<!-- FOLIE 7 -->
+<div class="slide" id="slide6">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 3 · Prompts schreiben</div>
+      <div class="slide-title">📋 Zutat 2: Kontext — die Situation erklären</div>
+    </div>
+    <div class="slide-meta">Folie 7 / 11</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Was zum Kontext gehört</div>
+        <ul class="icon-list" style="margin-top:8px;">
+          <li><span class="ico">🏢</span><span>Wer sind Sie / Ihr Unternehmen?</span></li>
+          <li><span class="ico">👤</span><span>An wen richtet sich der Text?</span></li>
+          <li><span class="ico">📜</span><span>Was ist die Vorgeschichte?</span></li>
+          <li><span class="ico">ℹ️</span><span>Welche Informationen sind wichtig?</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="section-label">Prompt-Vergleich</div>
+        <div style="margin-top:8px;display:flex;flex-direction:column;gap:8px;">
+          <div>
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--warn);margin-bottom:4px;">Ohne Kontext</div>
+            <div class="prompt-box" style="font-size:12px;">"Schreib eine Mahnung."</div>
+          </div>
+          <div>
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--success);margin-bottom:4px;">Mit Kontext</div>
+            <div class="prompt-box" style="font-size:11.5px;">"Schreib eine Mahnung für die Firma Stahlbau Krenn KG. Rechnung Nr. 2025-112 über € 4.800,– ist seit 45 Tagen offen. Wir hatten bereits eine freundliche Erinnerung geschickt. Diesmal soll die Mahnung bestimmter sein, aber noch nicht mit rechtlichen Schritten drohen."</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="highlight">Kontext ist das Wichtigste — mehr Kontext bedeutet fast immer ein besseres Ergebnis.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 3 · Prompts schreiben</span>
+  </div>
+</div>
+
+<!-- FOLIE 8 -->
+<div class="slide" id="slide7">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 3 · Prompts schreiben</div>
+      <div class="slide-title">🎯 Zutat 3: Ziel — was soll herauskommen?</div>
+    </div>
+    <div class="slide-meta">Folie 8 / 11</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Das Ziel klar benennen</div>
+        <ul class="icon-list" style="margin-top:8px;">
+          <li><span class="ico">✉️</span><span>"Schreib eine E-Mail" vs. "Erstelle einen Entwurf für eine E-Mail"</span></li>
+          <li><span class="ico">📝</span><span>"Zusammenfassung" vs. "5 Stichpunkte, die wichtigsten Fakten"</span></li>
+          <li><span class="ico">📊</span><span>"Hilf mir" vs. "Erstelle eine Tabelle mit 3 Spalten"</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="section-label">Häufige Zielformulierungen</div>
+        <ol class="step-list" style="margin-top:8px;">
+          <li><span class="step-num">1</span><span><strong>Schreib / Erstelle / Formuliere:</strong> Für neue Texte und Dokumente</span></li>
+          <li><span class="step-num">2</span><span><strong>Fass zusammen / Kürze:</strong> Für Zusammenfassungen und Kürzungen</span></li>
+          <li><span class="step-num">3</span><span><strong>Übersetze / Formuliere um:</strong> Für Spracharbeit</span></li>
+          <li><span class="step-num">4</span><span><strong>Erkläre / Beantworte:</strong> Für Fragen und Erklärungen</span></li>
+          <li><span class="step-num">5</span><span><strong>Erstelle eine Tabelle / Liste:</strong> Für strukturierte Ausgaben</span></li>
+        </ol>
+      </div>
+    </div>
+    <div class="highlight success">Das Ziel sagt Claude: Was ist fertig, wenn er die Antwort schickt?</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 3 · Prompts schreiben</span>
+  </div>
+</div>
+
+<!-- FOLIE 9 -->
+<div class="slide" id="slide8">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 3 · Prompts schreiben</div>
+      <div class="slide-title">📐 Zutat 4: Format — wie soll es aussehen?</div>
+    </div>
+    <div class="slide-meta">Folie 9 / 11</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Format-Angaben</div>
+        <ul class="icon-list" style="margin-top:8px;">
+          <li><span class="ico">📏</span><span><strong>Länge:</strong> "Max. 3 Sätze" / "Ausführlich mit Begründung"</span></li>
+          <li><span class="ico">🎨</span><span><strong>Ton:</strong> "Formal" / "Freundlich" / "Sachlich" / "Dringend"</span></li>
+          <li><span class="ico">🗂️</span><span><strong>Struktur:</strong> "Als Liste" / "Als Fließtext" / "Mit Überschriften"</span></li>
+          <li><span class="ico">🌐</span><span><strong>Sprache:</strong> "Auf Deutsch" / "Österreichisches Deutsch"</span></li>
+          <li><span class="ico">💾</span><span><strong>Ausgabe:</strong> "Als Word-Datei" / "Als Tabelle" / "Mit Briefkopf"</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="section-label">Praktisches Beispiel</div>
+        <div class="prompt-box" style="margin-top:8px;font-size:12px;">
+          "Fass diesen Vertrag in maximal 5 Stichpunkten zusammen. Fokus auf: Fristen, Zahlungsbedingungen und Haftung. Sprache: einfaches Deutsch, keine Juristensprache."
+        </div>
+      </div>
+    </div>
+    <div class="highlight warn">Format ist optional — aber es verhindert, dass Claude einen Roman schreibt, wenn Sie nur 2 Sätze brauchen.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 3 · Prompts schreiben</span>
+  </div>
+</div>
+
+<!-- FOLIE 10 -->
+<div class="slide" id="slide9">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 3 · Prompts schreiben</div>
+      <div class="slide-title">🔄 Nachfassen — das Gespräch weiterführen</div>
+    </div>
+    <div class="slide-meta">Folie 10 / 11</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Claude merkt sich den Chat-Kontext</div>
+        <ul class="icon-list" style="margin-top:8px;">
+          <li><span class="ico">💾</span><span>Alles im selben Chat ist Claude bekannt</span></li>
+          <li><span class="ico">🔄</span><span>Kein erneutes Erklären nötig</span></li>
+          <li><span class="ico">✏️</span><span>Einfach sagen, was besser werden soll</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="section-label">Typische Nachfass-Prompts</div>
+        <ol class="step-list" style="margin-top:8px;">
+          <li><span class="step-num">1</span><span>"Kürzer bitte" — auf 3 Sätze kürzen</span></li>
+          <li><span class="step-num">2</span><span>"Formeller" — Ton anpassen</span></li>
+          <li><span class="step-num">3</span><span>"Füge eine Frist hinzu: bis 30. Mai" — Detail ergänzen</span></li>
+          <li><span class="step-num">4</span><span>"Mach daraus eine Liste" — Format ändern</span></li>
+          <li><span class="step-num">5</span><span>"Das war gut, jetzt dasselbe für Lieferant Maier" — Variante erstellen</span></li>
+        </ol>
+      </div>
+    </div>
+    <div class="highlight success">Claude ist kein Automat — er ist ein Gesprächspartner. Zwischenergebnisse verfeinern ist normal und gewollt.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 3 · Prompts schreiben</span>
+  </div>
+</div>
+
+<!-- FOLIE 11 -->
+<div class="slide" id="slide10">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 3 · Prompts schreiben</div>
+      <div class="slide-title">📋 Ihr Spickzettel — die wichtigsten Regeln</div>
+    </div>
+    <div class="slide-meta">Folie 11 / 11</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Die 5 goldenen Regeln</div>
+        <ul class="icon-list" style="margin-top:8px;">
+          <li><span class="ico green">✓</span><span><strong>Konkret sein:</strong> Namen, Daten, Zahlen immer angeben</span></li>
+          <li><span class="ico green">✓</span><span><strong>Ziel benennen:</strong> Was soll am Ende herauskommen?</span></li>
+          <li><span class="ico green">✓</span><span><strong>Ton angeben:</strong> Formell, freundlich, kurz, ausführlich</span></li>
+          <li><span class="ico green">✓</span><span><strong>Nachfassen:</strong> Erstes Ergebnis ist ein Entwurf, nicht das Finale</span></li>
+          <li><span class="ico green">✓</span><span><strong>Kontext geben:</strong> Je mehr Claude weiß, desto besser</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="section-label">Der universelle Prompt-Baukasten</div>
+        <div class="prompt-box" style="margin-top:8px;font-size:11.5px;">
+          [Rolle, optional] + [Kontext] + [Ziel] + [Format]<br><br>
+          Beispiel ausgefüllt:<br><br>
+          "[Als Büroprofi bei einem Bauunternehmen] schreib [eine Auftragsbestätigung für Kunde Stadtgemeinde Linz, Pflasterarbeiten, € 38.500,–] [als professionellen Brief] [mit Briefkopf Grundstein Bau GmbH, max. 1 Seite]."
+        </div>
+      </div>
+    </div>
+    <div class="highlight">Weiter in Block 6: 10 fertige Anwendungsfälle — mit Prompt-Vorlagen, die man direkt verwenden kann.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 3 · Prompts schreiben</span>
+  </div>
+</div>
+
+<script>
+const total = 11;
+function goTo(n) {
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('slide' + n).classList.add('active');
+  document.getElementById('btn' + n).classList.add('active');
+}
+window.addEventListener('message', function(e) {
+  
+  const active = document.querySelector('.slide.active');
+  const idx = active ? parseInt(active.id.replace('slide','')) : 0;
+  if (e.data === 'next' || e.data?.type === 'next') {
+    if (idx < total - 1) { goTo(idx + 1); }
+    else { window.parent.postMessage('blockEnd', '*'); }
+  } else if (e.data === 'prev' || e.data?.type === 'prev') {
+    if (idx > 0) { goTo(idx - 1); }
+    else { window.parent.postMessage('blockStart', '*'); }
+  }
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowRight' || e.key === ' ') {
+    e.preventDefault();
+    const active = document.querySelector('.slide.active');
+    const idx = active ? parseInt(active.id.replace('slide','')) : 0;
+    if (idx < total - 1) goTo(idx + 1);
+    else window.parent.postMessage('blockEnd', '*');
+  } else if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    const active = document.querySelector('.slide.active');
+    const idx = active ? parseInt(active.id.replace('slide','')) : 0;
+    if (idx > 0) goTo(idx - 1);
+    else window.parent.postMessage('blockStart', '*');
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Block 0 – Ankommen & Setup | Claude-Workshop</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #f7f5f0;
+    --header-dark: #2b2b2b;
+    --accent: #4a6fa5;
+    --accent-light: #e8eef7;
+    --accent-mid: #7a9bc8;
+    --text-dark: #1e1e1e;
+    --text-mid: #4a4a4a;
+    --text-light: #7a7a7a;
+    --border: #ddd8cf;
+    --white: #ffffff;
+    --footer-stripe: #4a6fa5;
+    --success: #3a7d5a;
+    --success-bg: #edf7f2;
+    --warn: #b5621a;
+    --warn-bg: #fff7ef;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #3a3a3a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    gap: 16px;
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  .nav {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 980px;
+  }
+  .nav button {
+    background: #555;
+    color: #fff;
+    border: none;
+    padding: 5px 13px;
+    border-radius: 4px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .nav button:hover { background: var(--accent); }
+  .nav button.active { background: var(--accent); }
+
+  /* SLIDE */
+  .slide {
+    width: 960px;
+    max-width: 100%;
+    background: var(--cream);
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.45);
+    display: none;
+    flex-direction: column;
+    min-height: 540px;
+  }
+  .slide.active { display: flex; }
+
+  /* HEADER */
+  .slide-header {
+    background: var(--header-dark);
+    color: var(--white);
+    padding: 16px 36px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .block-label {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent-mid);
+    font-weight: 500;
+  }
+  .slide-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 21px;
+    line-height: 1.25;
+    margin-top: 4px;
+  }
+  .slide-meta {
+    font-size: 11px;
+    color: #999;
+    text-align: right;
+    line-height: 1.6;
+  }
+
+  /* BODY */
+  .slide-body {
+    flex: 1;
+    padding: 24px 36px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  /* FOOTER */
+  .slide-footer { height: 5px; background: var(--footer-stripe); }
+  .slide-footer-bar {
+    height: 26px;
+    background: #f0ece4;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 36px;
+  }
+  .slide-footer-bar span { font-size: 10px; color: var(--text-light); letter-spacing: 0.06em; }
+
+  /* LAYOUT */
+  .cols-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .cols-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  .cols-2-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 18px; }
+
+  /* CARD */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+  }
+  .card-accent { border-left: 4px solid var(--accent); }
+  .card h3 {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 7px;
+  }
+  .card p { font-size: 13px; color: var(--text-mid); line-height: 1.55; }
+
+  /* HIGHLIGHT */
+  .highlight {
+    background: var(--accent-light);
+    border-left: 4px solid var(--accent);
+    border-radius: 4px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--text-dark);
+    line-height: 1.55;
+  }
+  .highlight.warn { background: var(--warn-bg); border-left-color: var(--warn); color: #6b3a10; }
+  .highlight.success { background: var(--success-bg); border-left-color: var(--success); color: #1f4d35; }
+
+  /* ICON LIST */
+  .icon-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .icon-list li {
+    display: flex; align-items: flex-start; gap: 9px;
+    font-size: 13px; color: var(--text-mid); line-height: 1.45;
+  }
+  .icon-list li .ico {
+    flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%;
+    background: var(--accent-light); display: flex; align-items: center;
+    justify-content: center; font-size: 11px; margin-top: 1px;
+  }
+  .icon-list li strong { color: var(--text-dark); }
+
+  /* SECTION LABEL */
+  .section-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--accent);
+    border-bottom: 2px solid var(--accent-light);
+    padding-bottom: 3px; margin-bottom: 4px;
+  }
+
+  /* TITLE SLIDE */
+  .title-body {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 14px; padding: 32px 48px; text-align: center;
+  }
+  .block-badge {
+    background: var(--accent); color: white; font-size: 12px; font-weight: 600;
+    padding: 5px 16px; border-radius: 20px; letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .title-body h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 36px; color: var(--text-dark); line-height: 1.2;
+  }
+  .title-body .sub {
+    font-size: 14px; color: var(--text-mid); max-width: 520px; line-height: 1.55;
+  }
+  .time-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #f0ece4; border: 1px solid var(--border);
+    padding: 5px 14px; border-radius: 20px; font-size: 12px; color: var(--text-mid);
+  }
+
+  /* AGENDA TABLE */
+  .agenda-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  .agenda-table thead tr { background: var(--header-dark); color: white; }
+  .agenda-table thead th { padding: 8px 14px; text-align: left; font-weight: 600; letter-spacing: 0.04em; }
+  .agenda-table tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+  .agenda-table tbody tr:nth-child(odd) { background: #f9f7f4; }
+  .agenda-table tbody tr.current-row { background: var(--accent-light); }
+  .agenda-table tbody td { padding: 8px 14px; color: var(--text-mid); vertical-align: middle; }
+  .agenda-table tbody td:first-child { color: var(--text-light); font-size: 11px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .agenda-table tbody td:nth-child(2) { font-weight: 600; color: var(--text-dark); }
+  .agenda-table .pill {
+    display: inline-block; font-size: 10px; font-weight: 600;
+    padding: 2px 8px; border-radius: 10px; letter-spacing: 0.04em;
+  }
+  .pill-now { background: var(--accent); color: white; }
+  .pill-break { background: #f0ece4; color: var(--text-light); border: 1px solid var(--border); }
+
+  /* SETUP CHECKLIST */
+  .check-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .check-list li {
+    display: flex; align-items: flex-start; gap: 12px;
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 6px; padding: 11px 14px;
+    font-size: 13px; color: var(--text-mid); line-height: 1.45;
+  }
+  .check-list li .chk {
+    flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; margin-top: 0;
+  }
+  .chk-ok { background: var(--success-bg); color: var(--success); border: 1.5px solid #a3d4bb; }
+  .chk-warn { background: var(--warn-bg); color: var(--warn); border: 1.5px solid #f0b87a; }
+  .chk-info { background: var(--accent-light); color: var(--accent); border: 1.5px solid var(--accent-mid); }
+  .check-list li strong { color: var(--text-dark); display: block; margin-bottom: 2px; }
+
+  /* EINSTIEGSFRAGE */
+  .question-box {
+    background: var(--header-dark);
+    border-radius: 8px;
+    padding: 22px 28px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .question-box .q-label {
+    font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--accent-mid); font-weight: 600;
+  }
+  .question-box .q-text {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px; line-height: 1.3; color: white;
+  }
+  .question-box .q-hint {
+    font-size: 12px; color: #aaa; margin-top: 4px;
+  }
+
+  .bubble-row {
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+  .bubble {
+    background: var(--white); border: 1.5px solid var(--border);
+    border-radius: 20px; padding: 7px 16px;
+    font-size: 12.5px; color: var(--text-mid);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .bubble .b-ico { font-size: 14px; }
+
+  /* TRAINER BOX */
+  .trainer-box {
+    background: #2b2b2b;
+    border-radius: 6px;
+    padding: 12px 16px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .trainer-box .t-badge {
+    flex-shrink: 0;
+    background: var(--accent);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 3px;
+    margin-top: 1px;
+  }
+  .trainer-box .t-text {
+    font-size: 12px;
+    color: #ccc;
+    line-height: 1.5;
+  }
+
+  /* RULES */
+  .rule-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .rule-item {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 14px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .rule-item .r-ico {
+    font-size: 20px;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+  .rule-item .r-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 2px;
+  }
+  .rule-item .r-desc {
+    font-size: 12px;
+    color: var(--text-light);
+    line-height: 1.45;
+  }
+
+  /* TAGLINE */
+  .tagline-strip {
+    background: var(--accent);
+    color: white;
+    border-radius: 6px;
+    padding: 12px 20px;
+    text-align: center;
+    font-family: 'DM Serif Display', serif;
+    font-size: 17px;
+    letter-spacing: 0.01em;
+  }
+  .tagline-strip .t-sub {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11.5px;
+    opacity: 0.82;
+    margin-top: 3px;
+    font-style: normal;
+  }
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <button id="btn0" class="active" onclick="goTo(0)">Folie 1 · Willkommen</button>
+  <button id="btn1" onclick="goTo(1)">Folie 2 · Agenda</button>
+  <button id="btn2" onclick="goTo(2)">Folie 3 · Nach dem Workshop</button>
+  <button id="btn3" onclick="goTo(3)">Folie 4 · Einstiegsfrage</button>
+  <button id="btn4" onclick="goTo(4)">Folie 5 · Spielregeln</button>
+</div>
+
+<!-- ===== F1: TITELFOLIE ===== -->
+<div class="slide active" id="slide0">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 0 · Ankommen & Setup</div>
+      <div class="slide-title">Claude — der neue Assistent im Büroalltag</div>
+    </div>
+    <div class="slide-meta">Folie 1 / 5</div>
+  </div>
+  <div class="title-body">
+    <div class="block-badge">Block 0 · Ankommen</div>
+    <h1>Willkommen zum Workshop</h1>
+    <p class="sub">Heute lernen Sie einen digitalen Assistenten kennen, der echte Büroarbeit abnehmen kann — vom Entwurf bis zur fertigen E-Mail.</p>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:4px;">
+      <span class="time-pill">⏱ 15 Minuten</span>
+      <span class="time-pill">📍 Grundstein Bau GmbH · Linz</span>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar"><span>BLOCK 0 / FOLIE 1</span><span>Grundstein Bau GmbH · Linz</span></div>
+</div>
+
+<!-- ===== F2: AGENDA ===== -->
+<div class="slide" id="slide1">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 0 · Ankommen & Setup</div>
+      <div class="slide-title">Was uns heute erwartet</div>
+    </div>
+    <div class="slide-meta">Folie 2 / 5</div>
+  </div>
+  <div class="slide-body" style="gap:12px;">
+    <table class="agenda-table">
+      <thead>
+        <tr>
+          <th>Block</th>
+          <th>Dauer</th>
+          <th>Thema</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="current-row">
+          <td>Block 0</td>
+          <td>15 min</td>
+          <td>Ankommen, Setup &amp; Einstieg</td>
+          <td><span class="pill pill-now">Jetzt</span></td>
+        </tr>
+        <tr>
+          <td>Block 1</td>
+          <td>25 min</td>
+          <td>Was ist Claude — und warum nicht einfach Google?</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Block 2</td>
+          <td>20 min</td>
+          <td>Die Oberfläche kennenlernen</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Block 3</td>
+          <td>30 min</td>
+          <td>Prompts schreiben, die funktionieren</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Block 4</td>
+          <td>25 min</td>
+          <td>Cowork, Projekte &amp; Ordner</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>—</td>
+          <td>15 min</td>
+          <td>Pause</td>
+          <td><span class="pill pill-break">Pause</span></td>
+        </tr>
+        <tr>
+          <td>Block 5</td>
+          <td>20 min</td>
+          <td>Konnektoren (Mail, Kalender, Drive/OneDrive)</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Block 6</td>
+          <td>45 min</td>
+          <td>10 Anwendungsfälle fürs Büro</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Block 7</td>
+          <td>20 min</td>
+          <td>Dokumente &amp; Formulare schnell erstellen</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Block 8</td>
+          <td>10 min</td>
+          <td>Wrap-up, Ausblick &amp; Fragen</td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="highlight" style="font-size:12px;">
+      <strong>Hinweis:</strong> Die Zeiten sind Richtwerte — bei lebhaften Diskussionen darf es ruhig ein paar Minuten länger dauern. Pausen werden angepasst.
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar"><span>BLOCK 0 / FOLIE 2</span><span>Grundstein Bau GmbH · Linz</span></div>
+</div>
+
+<!-- ===== F3: NACH DEM WORKSHOP ===== -->
+<div class="slide" id="slide2">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 0 · Ankommen & Setup</div>
+      <div class="slide-title">Was Sie nach dem Workshop brauchen</div>
+    </div>
+    <div class="slide-meta">Folie 3 / 5</div>
+  </div>
+  <div class="slide-body" style="gap:12px;">
+    <div class="highlight" style="font-size:13px;">
+      Heute schauen wir gemeinsam zu — der Trainer zeigt alles live. <strong>Zum Selbstausprobieren daheim</strong> brauchen Sie das Folgende:
+    </div>
+    <div class="cols-2" style="align-items:start; gap:16px;">
+      <div>
+        <div class="section-label" style="margin-bottom:10px;">Schritt 1 — Kostenlos starten</div>
+        <ul class="check-list">
+          <li>
+            <span class="chk chk-ok">✓</span>
+            <div><strong>Claude-Account anlegen</strong>Unter <em>claude.ai</em> kostenlos registrieren — eine E-Mail-Adresse reicht. Funktioniert im Browser auf jedem Computer.</div>
+          </li>
+          <li>
+            <span class="chk chk-ok">✓</span>
+            <div><strong>Sofort nutzbar: Chat, Prompts, Dokumente</strong>Der kostenlose Plan reicht für alles, was wir in Block 1–3 und 6 zeigen — E-Mails, Protokolle, Zusammenfassungen, Übersetzungen.</div>
+          </li>
+        </ul>
+        <div class="section-label" style="margin-bottom:10px; margin-top:14px;">Schritt 2 — Pro-Plan für den vollen Büroalltag</div>
+        <ul class="check-list">
+          <li>
+            <span class="chk chk-info">★</span>
+            <div><strong>Claude Pro (ca. 20 €/Monat)</strong>Schaltet Projekte, dauerhaftes Gedächtnis und die Desktop App frei — das ist das Herzstück für echte Büroarbeit.</div>
+          </li>
+          <li>
+            <span class="chk chk-info">i</span>
+            <div><strong>Claude Desktop App installieren</strong>Download unter <em>claude.ai/download</em> — einmalige Installation, dann Cowork-Modus aktivieren und Ordner verbinden.</div>
+          </li>
+        </ul>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div class="section-label" style="margin-bottom:6px;">Heute im Workshop</div>
+        <ul class="icon-list">
+          <li><span class="ico">👁️</span><div><strong>Zuschauen & verstehen</strong> — Der Trainer demonstriert alle Schritte live am Bildschirm vorne.</div></li>
+          <li><span class="ico">💬</span><div><strong>Fragen stellen</strong> — Jederzeit nachfragen, was unklar ist. Keine Frage ist zu einfach.</div></li>
+          <li><span class="ico">🗒️</span><div><strong>Notizen machen</strong> — Alle Prompts und Links gibt es nach dem Workshop als Handout.</div></li>
+        </ul>
+        <div class="highlight success" style="font-size:12px; margin-top:6px;">
+          <strong>Datenschutz:</strong> Im Pro-Plan werden Chats standardmäßig <em>nicht</em> für Training verwendet. Für heute gilt: keine echten Kundendaten in die Demos eingeben.
+        </div>
+        <div class="trainer-box">
+          <span class="t-badge">Trainer</span>
+          <div class="t-text">Kurze Runde: Wer hat Claude schon einmal benutzt? Hände einsammeln — gibt ein gutes Stimmungsbild für die Gruppe.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar"><span>BLOCK 0 / FOLIE 3</span><span>Grundstein Bau GmbH · Linz</span></div>
+</div>
+
+<!-- ===== F4: EINSTIEGSFRAGE ===== -->
+<div class="slide" id="slide3">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 0 · Ankommen & Setup</div>
+      <div class="slide-title">Einstieg: Was kostet Sie am meisten Zeit?</div>
+    </div>
+    <div class="slide-meta">Folie 4 / 5</div>
+  </div>
+  <div class="slide-body" style="gap:14px;">
+    <div class="question-box">
+      <div class="q-label">Diskussionsimpuls</div>
+      <div class="q-text">„Welche Aufgabe im Büroalltag wünschen Sie sich am meisten vom Tisch — und warum?"</div>
+      <div class="q-hint">Bitte kurz laut nennen oder auf einem Zettel notieren. Es gibt keine falschen Antworten.</div>
+    </div>
+    <div class="section-label">Typische Antworten aus Büros — kommt Ihnen etwas bekannt vor?</div>
+    <div class="bubble-row">
+      <div class="bubble"><span class="b-ico">📧</span> E-Mails formulieren</div>
+      <div class="bubble"><span class="b-ico">📋</span> Protokolle schreiben</div>
+      <div class="bubble"><span class="b-ico">📝</span> Angebote & Briefe</div>
+      <div class="bubble"><span class="b-ico">🔎</span> Informationen zusammensuchen</div>
+      <div class="bubble"><span class="b-ico">📄</span> Formulare ausfüllen</div>
+      <div class="bubble"><span class="b-ico">🗂️</span> Dokumente strukturieren</div>
+      <div class="bubble"><span class="b-ico">🌍</span> Übersetzen</div>
+      <div class="bubble"><span class="b-ico">📅</span> Termine koordinieren</div>
+      <div class="bubble"><span class="b-ico">✅</span> Checklisten erstellen</div>
+      <div class="bubble"><span class="b-ico">📊</span> Berichte zusammenfassen</div>
+    </div>
+    <div class="trainer-box">
+      <span class="t-badge">Trainer</span>
+      <div class="t-text">Antworten der Gruppe kurz an Flipchart / Whiteboard sammeln. Darauf am Ende des Workshops zurückverweisen: „Erinnern Sie sich — das haben wir heute alles abgedeckt."</div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar"><span>BLOCK 0 / FOLIE 4</span><span>Grundstein Bau GmbH · Linz</span></div>
+</div>
+
+<!-- ===== F5: SPIELREGELN ===== -->
+<div class="slide" id="slide4">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 0 · Ankommen & Setup</div>
+      <div class="slide-title">So arbeiten wir heute zusammen</div>
+    </div>
+    <div class="slide-meta">Folie 5 / 5</div>
+  </div>
+  <div class="slide-body" style="gap:14px;">
+    <div class="rule-grid">
+      <div class="rule-item">
+        <div class="r-ico">🙋</div>
+        <div>
+          <div class="r-title">Fragen jederzeit</div>
+          <div class="r-desc">Wenn etwas unklar ist, sofort fragen — kein Vorwissen nötig, keine dummen Fragen.</div>
+        </div>
+      </div>
+      <div class="rule-item">
+        <div class="r-ico">👁️</div>
+        <div>
+          <div class="r-title">Zuschauen & Fragen stellen</div>
+          <div class="r-desc">Der Trainer zeigt alles live — Fragen jederzeit stellen. Das Ausprobieren kommt danach daheim.</div>
+        </div>
+      </div>
+      <div class="rule-item">
+        <div class="r-ico">🔒</div>
+        <div>
+          <div class="r-title">Keine echten Kundendaten</div>
+          <div class="r-desc">Alle Beispiele basieren auf dem fiktiven Unternehmen „Grundstein Bau GmbH" — so bleiben alle Beispiele sicher.</div>
+        </div>
+      </div>
+      <div class="rule-item">
+        <div class="r-ico">📵</div>
+        <div>
+          <div class="r-title">Handys auf lautlos</div>
+          <div class="r-desc">Kurze Unterbrechungen für Dringendes sind okay — einfach kurz Bescheid geben.</div>
+        </div>
+      </div>
+      <div class="rule-item">
+        <div class="r-ico">☕</div>
+        <div>
+          <div class="r-title"></div>
+          <div class="r-desc">Ca. gegen 10:30 Uhr gibt es eine kurze Pause — wer früher Bedarf hat, einfach Bescheid sagen.</div>
+        </div>
+      </div>
+      <div class="rule-item">
+        <div class="r-ico">🗒️</div>
+        <div>
+          <div class="r-title">Unterlagen gibt es nach dem Workshop</div>
+          <div class="r-desc">Alle wichtigen Prompts, Links und Tipps werden im Anschluss als Handout weitergegeben.</div>
+        </div>
+      </div>
+    </div>
+    <div class="tagline-strip">
+      Kein Vorwissen nötig — nur Neugier.
+      <div class="t-sub">Claude ist auch für absolute Einsteiger gemacht. Wir fangen gemeinsam von vorne an.</div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar"><span>BLOCK 0 / FOLIE 5</span><span>Grundstein Bau GmbH · Linz</span></div>
+</div>
+
+<script>
+const total = 5;
+function goTo(n) {
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('slide' + n).classList.add('active');
+  document.getElementById('btn' + n).classList.add('active');
+}
+window.addEventListener('message', function(e) {
+  const active = document.querySelector('.slide.active');
+  const idx = active ? parseInt(active.id.replace('slide','')) : 0;
+  if (e.data === 'next' || e.data?.type === 'next') {
+    if (idx < total - 1) { goTo(idx + 1); }
+    else { window.parent.postMessage('blockEnd', '*'); }
+  } else if (e.data === 'prev' || e.data?.type === 'prev') {
+    if (idx > 0) { goTo(idx - 1); }
+    else { window.parent.postMessage('blockStart', '*'); }
+  }
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowRight' || e.key === ' ') {
+    e.preventDefault();
+    const active = document.querySelector('.slide.active');
+    const idx = active ? parseInt(active.id.replace('slide','')) : 0;
+    if (idx < total - 1) goTo(idx + 1);
+    else window.parent.postMessage('blockEnd', '*');
+  } else if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    const active = document.querySelector('.slide.active');
+    const idx = active ? parseInt(active.id.replace('slide','')) : 0;
+    if (idx > 0) goTo(idx - 1);
+    else window.parent.postMessage('blockStart', '*');
+  }
+});
+</script>
+</body>
+</html>

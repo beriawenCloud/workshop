@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Block 4 – Cowork, Projekte & Ordner | Claude-Workshop</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #f7f5f0;
+    --header-dark: #2b2b2b;
+    --accent: #4a6fa5;
+    --accent-light: #e8eef7;
+    --accent-mid: #7a9bc8;
+    --text-dark: #1e1e1e;
+    --text-mid: #4a4a4a;
+    --text-light: #7a7a7a;
+    --border: #ddd8cf;
+    --white: #ffffff;
+    --success: #3a7d5a;
+    --success-bg: #edf7f2;
+    --warn: #b5621a;
+    --warn-bg: #fff7ef;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'DM Sans',sans-serif; background:#3a3a3a; display:flex; flex-direction:column; align-items:center; padding:20px; gap:16px; min-height:100vh; }
+  .nav { display:flex; gap:6px; flex-wrap:wrap; justify-content:center; max-width:980px; }
+  .nav button { background:#555; color:#fff; border:none; padding:4px 9px; border-radius:4px; font-family:'DM Sans',sans-serif; font-size:10.5px; cursor:pointer; transition:background 0.2s; white-space:nowrap; }
+  .nav button:hover { background:var(--accent); }
+  .nav button.active { background:var(--accent); }
+
+  .slide { width:960px; max-width:100%; background:var(--cream); border-radius:4px; overflow:hidden; box-shadow:0 8px 40px rgba(0,0,0,0.45); display:none; flex-direction:column; min-height:540px; }
+  .slide.active { display:flex; }
+
+  .slide-header { background:var(--header-dark); color:var(--white); padding:16px 36px 14px; display:flex; justify-content:space-between; align-items:flex-end; }
+  .slide-header .block-label { font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent-mid); font-weight:500; }
+  .slide-header .slide-title { font-family:'DM Serif Display',serif; font-size:21px; line-height:1.25; margin-top:4px; }
+  .slide-header .slide-meta { font-size:11px; color:#999; text-align:right; line-height:1.6; }
+
+  .slide-body { flex:1; padding:24px 36px 18px; display:flex; flex-direction:column; gap:14px; }
+  .slide-footer { height:5px; background:var(--accent); }
+  .slide-footer-bar { height:26px; background:#f0ece4; border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; padding:0 36px; }
+  .slide-footer-bar span { font-size:10px; color:var(--text-light); letter-spacing:0.06em; }
+
+  .cols-2 { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  .cols-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
+
+  .card { background:var(--white); border:1px solid var(--border); border-radius:6px; padding:14px 16px; }
+  .card-accent { border-left:4px solid var(--accent); }
+  .card-success { border-left:4px solid var(--success); }
+  .card h3 { font-size:12px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:7px; }
+  .card-success h3 { color:var(--success); }
+  .card p { font-size:13px; color:var(--text-mid); line-height:1.55; }
+
+  .highlight { background:var(--accent-light); border-left:4px solid var(--accent); border-radius:4px; padding:10px 14px; font-size:13px; color:var(--text-dark); line-height:1.55; }
+  .highlight.warn { background:var(--warn-bg); border-left-color:var(--warn); color:#6b3a10; }
+  .highlight.success { background:var(--success-bg); border-left-color:var(--success); color:#1f4d35; }
+  .trainer-box { background:#2b2b2b; border-radius:6px; padding:10px 14px; display:flex; gap:10px; align-items:flex-start; }
+  .trainer-box .t-badge { flex-shrink:0; background:var(--accent); color:white; font-size:10px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; padding:3px 8px; border-radius:3px; margin-top:1px; }
+  .trainer-box .t-text { font-size:12px; color:#ccc; line-height:1.5; }
+
+  .icon-list { list-style:none; display:flex; flex-direction:column; gap:7px; }
+  .icon-list li { display:flex; align-items:flex-start; gap:9px; font-size:13px; color:var(--text-mid); line-height:1.4; }
+  .icon-list li .ico { flex-shrink:0; width:20px; height:20px; border-radius:50%; background:var(--accent-light); display:flex; align-items:center; justify-content:center; font-size:11px; margin-top:1px; }
+  .icon-list li strong { color:var(--text-dark); }
+
+  .step-list { list-style:none; display:flex; flex-direction:column; gap:8px; }
+  .step-list li { display:flex; align-items:flex-start; gap:10px; font-size:13px; color:var(--text-mid); line-height:1.4; }
+  .step-num { flex-shrink:0; width:22px; height:22px; border-radius:50%; background:var(--accent); color:white; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+
+  .section-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--accent); border-bottom:2px solid var(--accent-light); padding-bottom:3px; margin-bottom:4px; }
+
+  .title-body { flex:1; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:14px; padding:32px 48px; text-align:center; }
+  .block-badge { background:var(--accent); color:white; font-size:12px; font-weight:600; padding:5px 16px; border-radius:20px; letter-spacing:0.06em; text-transform:uppercase; }
+  .title-body h1 { font-family:'DM Serif Display',serif; font-size:36px; color:var(--text-dark); line-height:1.2; }
+  .title-body .sub { font-size:14px; color:var(--text-mid); max-width:520px; line-height:1.55; }
+  .time-pill { display:inline-flex; align-items:center; gap:6px; background:#f0ece4; border:1px solid var(--border); padding:5px 14px; border-radius:20px; font-size:12px; color:var(--text-mid); }
+
+  .prompt-box { background:#1e1e1e; border-radius:6px; padding:12px 15px; font-size:12px; color:#d4e0f0; line-height:1.6; font-family:monospace; }
+
+  .mock-chat { display:flex; flex-direction:column; gap:8px; background:white; border:1px solid var(--border); border-radius:6px; padding:12px; }
+  .mock-bubble { max-width:88%; padding:7px 10px; border-radius:8px; font-size:11.5px; line-height:1.45; }
+  .mock-bubble.user { background:var(--accent); color:white; border-radius:8px 8px 2px 8px; align-self:flex-end; }
+  .mock-bubble.claude { background:#f0ece4; color:var(--text-dark); border-radius:8px 8px 8px 2px; align-self:flex-start; }
+
+  table.simple { width:100%; border-collapse:collapse; font-size:12px; }
+  table.simple thead tr { background:var(--header-dark); color:white; }
+  table.simple thead th { padding:6px 10px; text-align:left; font-weight:600; }
+  table.simple tbody tr { border-bottom:1px solid var(--border); }
+  table.simple tbody tr:nth-child(odd) { background:#f9f7f4; }
+  table.simple tbody td { padding:6px 10px; color:var(--text-mid); }
+  table.simple tbody td:first-child { color:var(--text-dark); font-weight:600; }
+
+  .flow-row { display:flex; align-items:center; gap:0; flex-wrap:nowrap; }
+  .flow-step { flex:1; background:var(--white); border:1px solid var(--border); border-radius:6px; padding:10px 10px; text-align:center; font-size:12px; color:var(--text-mid); line-height:1.4; }
+  .flow-step .fs-icon { font-size:18px; display:block; margin-bottom:4px; }
+  .flow-step .fs-label { font-size:10px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:0.06em; }
+  .flow-arrow { flex-shrink:0; font-size:18px; color:var(--accent-mid); padding:0 6px; }
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <button onclick="goTo(0)" id="btn0" class="active">① Titel</button>
+  <button onclick="goTo(1)" id="btn1">② Problem</button>
+  <button onclick="goTo(2)" id="btn2">③ Was ist Projekt?</button>
+  <button onclick="goTo(3)" id="btn3">④ Anlegen</button>
+  <button onclick="goTo(4)" id="btn4">⑤ Dateien</button>
+  <button onclick="goTo(5)" id="btn5">⑥ Praxis-Tabelle</button>
+  <button onclick="goTo(6)" id="btn6">⑦ Lange Dok. 1</button>
+  <button onclick="goTo(7)" id="btn7">⑧ Lange Dok. 2</button>
+  <button onclick="goTo(8)" id="btn8">⑨ Lange Dok. 3</button>
+  <button onclick="goTo(9)" id="btn9">⑩ Cowork Intro</button>
+  <button onclick="goTo(10)" id="btn10">⑪ Cowork Ordner</button>
+  <button onclick="goTo(11)" id="btn11">⑫ Cowork Demos</button>
+  <button onclick="goTo(12)" id="btn12">⑬ Cowork Live</button>
+  <button onclick="goTo(13)" id="btn13">⑭ Konnektoren</button>
+  <button onclick="goTo(14)" id="btn14">⑮ Mail+Kal. Live</button>
+  <button onclick="goTo(15)" id="btn15">⑯ Websuche</button>
+  <button onclick="goTo(16)" id="btn16">⑰ Kombiniert</button>
+</div>
+
+<!-- FOLIE 1 -->
+<div class="slide active" id="slide0">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 4 · Cowork, Projekte &amp; Ordner</div>
+      <div class="slide-title">Cowork, Projekte &amp; Ordner</div>
+    </div>
+    <div class="slide-meta">Folie 1 / 17</div>
+  </div>
+  <div class="title-body">
+    <div class="block-badge">Block 4</div>
+    <h1>Cowork, Projekte &amp; Ordner</h1>
+    <p class="sub">Claude mit Gedächtnis — wie Projekte, Dateien und die Desktop App zusammenspielen.</p>
+    <div class="time-pill">⏱ 25 Minuten</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 4 · Cowork, Projekte &amp; Ordner</span>
+  </div>
+</div>
+
+<!-- FOLIE 2 -->
+<div class="slide" id="slide1">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 4 · Cowork, Projekte &amp; Ordner</div>
+      <div class="slide-title">Kennen Sie das Problem?</div>
+    </div>
+    <div class="slide-meta">Folie 2 / 17</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-3">
+      <div class="card card-accent">
+        <h3>Immer von vorne</h3>
+        <p>Jeder neue Chat beginnt bei null. Was Claude letzte Woche über Ihr Unternehmen wusste, weiß er heute nicht mehr.</p>
+      </div>
+      <div class="card card-accent">
+        <h3>Vorlagen suchen</h3>
+        <p>Wo war noch mal die Briefkopf-Vorlage? Jedes Mal neu suchen, kopieren, einfügen.</p>
+      </div>
+      <div class="card card-accent">
+        <h3>Kontext wiederholen</h3>
+        <p>"Wir sind ein Bauunternehmen aus Linz..." — immer und immer wieder erklären.</p>
+      </div>
+    </div>
+    <div class="highlight success">Projekte lösen alle drei Probleme auf einmal.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 4 · Cowork, Projekte &amp; Ordner</span>
+  </div>
+</div>
+
+<!-- FOLIE 3 -->
+<div class="slide" id="slide2">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 4 · Cowork, Projekte &amp; Ordner</div>
+      <div class="slide-title">📁 Was ist ein Claude-Projekt?</div>
+    </div>
+    <div class="slide-meta">Folie 3 / 17</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Ein Projekt ist...</div>
+        <ul class="icon-list" style="margin-top:8px;">
+          <li><span class="ico">🗂️</span><span>Ein dauerhafter Arbeitsbereich in Claude</span></li>
+          <li><span class="ico">📝</span><span>Mit gespeicherten Anweisungen (was Claude über Sie wissen soll)</span></li>
+          <li><span class="ico">📎</span><span>Mit hochgeladenen Dateien (Vorlagen, Dokumente, Listen)</span></li>
+          <li><span class="ico">💬</span><span>Mit Gesprächshistorie (alle Chats im Projekt sind verknüpft)</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="card card-accent">
+          <h3>Vergleich: Chat vs. Projekt</h3>
+          <table class="simple" style="margin-top:6px;">
+            <thead><tr><th></th><th>Chat</th><th>Projekt</th></tr></thead>
+            <tbody>
+              <tr><td>Kontext</td><td>Nur dieser Chat</td><td>Dauerhaft gespeichert</td></tr>
+              <tr><td>Dateien</td><td>Nur im Chat</td><td>Immer verfügbar</td></tr>
+              <tr><td>Anweisungen</td><td>Jedes Mal neu</td><td>Einmal eingerichtet</td></tr>
+              <tr><td>Für was?</td><td>Einmalige Aufgaben</td><td>Wiederkehrende Arbeit</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 4 · Cowork, Projekte &amp; Ordner</span>
+  </div>
+</div>
+
+<!-- FOLIE 4 -->
+<div class="slide" id="slide3">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 4 · Cowork, Projekte &amp; Ordner</div>
+      <div class="slide-title">🔧 Ein Projekt anlegen — Schritt für Schritt</div>
+    </div>
+    <div class="slide-meta">Folie 4 / 17</div>
+  </div>
+  <div class="slide-body">
+    <ol class="step-list">
+      <li><span class="step-num">1</span><span>Linke Seitenleiste → "Neues Projekt" klicken</span></li>
+      <li><span class="step-num">2</span><span>Projektname vergeben (z.B. "Schriftverkehr Grundstein Bau")</span></li>
+      <li><span class="step-num">3</span><span>Projektanweisungen schreiben: Wer Sie sind, welchen Ton Claude verwenden soll, welchen Briefkopf</span></li>
+      <li><span class="step-num">4</span><span>Optional: Dateien hochladen (Vorlagen, Handbücher, Preislisten)</span></li>
+      <li><span class="step-num">5</span><span>Ersten Chat im Projekt starten</span></li>
+    </ol>
+    <div class="highlight">Die Projektanweisungen sind das Wichtigste — dort legen Sie fest, was Claude immer wissen soll.</div>
+    <div class="section-label">Beispiel-Anweisung</div>
+    <div class="prompt-box">
+      "Du hilfst beim Schriftverkehr der Grundstein Bau GmbH, Linz. Briefkopf: Industriestraße 12, 4020 Linz, Tel +43 732 123456. Ton: professionell, österreichisches Deutsch. Ausgabe wenn möglich als Word-Datei."
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 4 · Cowork, Projekte &amp; Ordner</span>
+  </div>
+</div>
+
+<!-- FOLIE 5 -->
+<div class="slide" id="slide4">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 4 · Cowork, Projekte &amp; Ordner</div>
+      <div class="slide-title">📎 Dateien in Projekte hochladen</div>
+    </div>
+    <div class="slide-meta">Folie 5 / 17</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Welche Dateien sind sinnvoll</div>
+        <ul class="icon-list" style="margin-top:8px;">
+          <li><span class="ico">📄</span><span>Briefkopf-Vorlagen (Word)</span></li>
+          <li><span class="ico">⚖️</span><span>Standardverträge und AGBs</span></li>
+          <li><span class="ico">💰</span><span>Preislisten und Materiallisten</span></li>
+          <li><span class="ico">📋</span><span>Interne Richtlinien und Handbücher</span></li>
+          <li><span class="ico">✅</span><span>Abnahme- und Checklistenvorlagen</span></li>
+          <li><span class="ico">🏗️</span><span>Projektspezifische Unterlagen</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="section-label">Was Claude damit machen kann</div>
+        <ol class="step-list" style="margin-top:8px;">
+          <li><span class="step-num">1</span><span><strong>Inhalt kennen:</strong> "Was steht in unseren AGBs zu Zahlungsfristen?"</span></li>
+          <li><span class="step-num">2</span><span><strong>Vorlage befüllen:</strong> "Füll diese Vorlage mit den Daten von Kunde Maier aus"</span></li>
+          <li><span class="step-num">3</span><span><strong>Vergleichen:</strong> "Vergleich dieses Angebot mit unserer Preisliste"</span></li>
+          <li><span class="step-num">4</span><span><strong>Zusammenfassen:</strong> "Was sind die wichtigsten Punkte in diesem Vertrag?"</span></li>
+        </ol>
+      </div>
+    </div>
+    <div class="highlight warn">Max. Dateigröße beachten: Große Dateien (&gt;10 MB) besser aufteilen oder als Text einfügen.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 4 · Cowork, Projekte &amp; Ordner</span>
+  </div>
+</div>
+
+<!-- FOLIE 6 -->
+<div class="slide" id="slide5">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 4 · Cowork, Projekte &amp; Ordner</div>
+      <div class="slide-title">📊 Welches Projekt für welche Aufgabe?</div>
+    </div>
+    <div class="slide-meta">Folie 6 / 17</div>
+  </div>
+  <div class="slide-body">
+    <table class="simple">
+      <thead>
+        <tr><th>Projektname</th><th>Anweisungen enthalten</th><th>Nützliche Dateien</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Schriftverkehr</td><td>Briefkopf, Ton, Standardfloskeln</td><td>Briefvorlagen, Muster-E-Mails</td></tr>
+        <tr><td>Baubesprechungen</td><td>Protokollstruktur, Teilnehmerliste</td><td>Bisherige Protokolle, Checklisten</td></tr>
+        <tr><td>Rechnungswesen</td><td>Zahlungskonditionen, Mahnstruktur</td><td>Rechnungsvorlage, Offene-Posten-Liste</td></tr>
+        <tr><td>Personalwesen</td><td>HR-Ton, DSGVO-Hinweise</td><td>Stellenanzeigen, Arbeitsvertrag-Muster</td></tr>
+        <tr><td>Ausschreibungen</td><td>Angebotsstruktur, Einheitspreise</td><td>Preisliste, Leistungsverzeichnis</td></tr>
+      </tbody>
+    </table>
+    <div class="highlight">Starten Sie mit einem Projekt — dem, das Ihnen am meisten Zeit spart.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 4 · Cowork, Projekte &amp; Ordner</span>
+  </div>
+</div>
+
+<!-- FOLIE 7 -->
+<div class="slide" id="slide6">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 4 · Cowork, Projekte &amp; Ordner</div>
+      <div class="slide-title">📄 Lange Dokumente verarbeiten — Teil 1</div>
+    </div>
+    <div class="slide-meta">Folie 7 / 17</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="card card-accent">
+          <h3>Zu lang für den Chat?</h3>
+          <p>Dokumente über ca. 50 Seiten können zu groß für einen einzelnen Chat sein. Claude kann nicht unbegrenzt viel Text auf einmal verarbeiten.</p>
+        </div>
+      </div>
+      <div>
+        <div class="section-label">3 Lösungsstrategien</div>
+        <ol class="step-list" style="margin-top:8px;">
+          <li><span class="step-num">1</span><span><strong>Als Projekt-Datei hochladen:</strong> Claude hat dauerhaften Zugriff und kann gezielt abfragen</span></li>
+          <li><span class="step-num">2</span><span><strong>Abschnittsweise einfügen:</strong> Dokument in Teile aufteilen, Teil für Teil verarbeiten</span></li>
+          <li><span class="step-num">3</span><span><strong>Gezielt zitieren:</strong> Nur die relevanten Abschnitte in den Chat kopieren</span></li>
+        </ol>
+      </div>
+    </div>
+    <div class="highlight warn">Faustregel: Bis ca. 30 Seiten problemlos im Chat hochladbar. Darüber: Projekt oder abschnittsweise.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 4 · Cowork, Projekte &amp; Ordner</span>
+  </div>
+</div>
+
+<!-- FOLIE 8 -->
+<div class="slide" id="slide7">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 4 · Cowork, Projekte &amp; Ordner</div>
+      <div class="slide-title">📄 Lange Dokumente — gezielt abfragen</div>
+    </div>
+    <div class="slide-meta">Folie 8 / 17</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Was funktioniert gut</div>
+        <ul class="icon-list" style="margin-top:8px;">
+          <li><span class="ico">🔍</span><span><strong>Spezifische Fragen:</strong> "Was steht in §4 zum Thema Zahlungsfrist?"</span></li>
+          <li><span class="ico">🔎</span><span><strong>Suche nach Begriffen:</strong> "Gibt es eine Klausel zu Gewährleistung?"</span></li>
+          <li><span class="ico">📋</span><span><strong>Extraktion:</strong> "Alle Fristen aus diesem Vertrag als Liste"</span></li>
+          <li><span class="ico">⚖️</span><span><strong>Vergleich:</strong> "Wo unterscheidet sich Angebot A von Angebot B?"</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="section-label">Was nicht gut funktioniert</div>
+        <ul class="icon-list" style="margin-top:8px;">
+          <li><span class="ico" style="background:#fff0ec;">⚠️</span><span>"Fass das gesamte Dokument zusammen" bei 100-seitigem Text → besser in Abschnitte aufteilen</span></li>
+          <li><span class="ico" style="background:#fff0ec;">⚠️</span><span>Zeilenweise Analyse sehr großer Tabellen → Excel direkt verwenden</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="highlight success">Gezielt fragen ist immer besser als "lies alles und sag mir alles".</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 4 · Cowork, Projekte &amp; Ordner</span>
+  </div>
+</div>
+
+<!-- FOLIE 9 -->
+<div class="slide" id="slide8">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 4 · Cowork, Projekte &amp; Ordner</div>
+      <div class="slide-title">📄 Workflow: Vertrag analysieren — live</div>
+    </div>
+    <div class="slide-meta">Folie 9 / 17</div>
+  </div>
+  <div class="slide-body">
+    <div class="mock-chat">
+      <div class="mock-bubble user">Ich lade jetzt unseren Standardwerkvertrag hoch. Bitte sag mir: Welche Fristen sind darin enthalten?</div>
+      <div class="mock-bubble claude">Ich habe den Vertrag gelesen. Folgende Fristen sind enthalten:<br>1. Zahlungsfrist: 30 Tage nach Rechnungslegung (§8)<br>2. Gewährleistung: 3 Jahre ab Abnahme (§12)<br>3. Kündigungsfrist: 4 Wochen zum Monatsende (§15)</div>
+      <div class="mock-bubble user">Und gibt es eine Klausel zu Vertragsstrafen?</div>
+      <div class="mock-bubble claude">Ja, in §10 ist eine Vertragsstrafe von 0,5% der Auftragssumme pro Woche Verzug geregelt, maximal 5% der Gesamtsumme.</div>
+    </div>
+    <div class="highlight success">Claude bleibt im selben Chat — Sie können beliebig viele Fragen zum selben Dokument stellen.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 4 · Cowork, Projekte &amp; Ordner</span>
+  </div>
+</div>
+
+<!-- FOLIE 10 -->
+<div class="slide" id="slide9">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 4 · Cowork, Projekte &amp; Ordner</div>
+      <div class="slide-title">🖥️ Cowork — Claude auf Ihrem Computer</div>
+    </div>
+    <div class="slide-meta">Folie 10 / 17</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-3">
+      <div class="card card-accent">
+        <h3>Was ist Cowork?</h3>
+        <p>Die Desktop-App verbindet Claude direkt mit Ihrem Computer. Sie wählen einen Ordner aus — Claude kann Dateien darin lesen, erstellen und bearbeiten.</p>
+      </div>
+      <div class="card card-accent">
+        <h3>Was brauchen Sie?</h3>
+        <p>Claude Desktop App (claude.ai/download), Pro-Plan aktiv, Ordner einmalig freigeben.</p>
+      </div>
+      <div class="card card-success">
+        <h3>Was ist der Vorteil?</h3>
+        <p>Dateien landen direkt auf Ihrem Computer, kein manuelles Kopieren, mehrere Dateien auf einmal bearbeiten.</p>
+      </div>
+    </div>
+    <div class="highlight">Cowork ist wie ein Assistent, der direkt an Ihrem Schreibtisch sitzt — und dabei Ihren ganzen Ordner kennt.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 4 · Cowork, Projekte &amp; Ordner</span>
+  </div>
+</div>
+
+<!-- FOLIE 11 -->
+<div class="slide" id="slide10">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 4 · Cowork, Projekte &amp; Ordner</div>
+      <div class="slide-title">📂 Cowork — Ordner verbinden</div>
+    </div>
+    <div class="slide-meta">Folie 11 / 17</div>
+  </div>
+  <div class="slide-body">
+    <ol class="step-list">
+      <li><span class="step-num">1</span><span>Claude Desktop App öffnen → Cowork-Modus starten</span></li>
+      <li><span class="step-num">2</span><span>Auf "Ordner auswählen" klicken → Ihren Dokumentenordner wählen (z.B. "Schriftverkehr 2025")</span></li>
+      <li><span class="step-num">3</span><span>Claude hat jetzt Zugriff — er kann Dateien lesen und neue erstellen</span></li>
+      <li><span class="step-num">4</span><span>Im Chat: einfach sagen, was Claude mit dem Ordner tun soll</span></li>
+    </ol>
+    <div class="section-label">Beispiel-Prompt</div>
+    <div class="prompt-box">
+      "Schau in den Ordner 'Angebote Mai 2025'. Wie viele Angebote liegen dort, und was ist der Gesamtwert?"
+    </div>
+    <div class="highlight warn">Claude sieht nur den Ordner, den Sie freigeben — und nur so lange, wie Sie die App offen haben.</div>
+    <div class="trainer-box">
+      <span class="t-badge">Trainer</span>
+      <div class="t-text">Live-Demo: Desktop App öffnen, Ordner verbinden, Beispiel-Prompt eingeben. Teilnehmer schauen zu — kein eigenes Gerät nötig.</div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 4 · Cowork, Projekte &amp; Ordner</span>
+  </div>
+</div>
+
+<!-- FOLIE 12 -->
+<div class="slide" id="slide11">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 4 · Cowork, Projekte &amp; Ordner</div>
+      <div class="slide-title">⚡ Was Cowork im Alltag erledigt</div>
+    </div>
+    <div class="slide-meta">Folie 12 / 17</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Schnelle Einzelaufgaben</div>
+        <ol class="step-list" style="margin-top:8px;">
+          <li><span class="step-num">1</span><span>"Erstell eine Auftragsbestätigung als Word-Datei und speichere sie im Ordner Schriftverkehr"</span></li>
+          <li><span class="step-num">2</span><span>"Wandle alle Word-Dateien im Ordner in PDFs um"</span></li>
+          <li><span class="step-num">3</span><span>"Benenne alle Dateien nach Schema: 2025-05_[Typ]_[Nummer]"</span></li>
+        </ol>
+      </div>
+      <div>
+        <div class="section-label">Batch-Aufgaben</div>
+        <ol class="step-list" style="margin-top:8px;">
+          <li><span class="step-num">1</span><span>"Füge in alle 10 Word-Dateien unseren neuen Briefkopf ein"</span></li>
+          <li><span class="step-num">2</span><span>"Erstelle für jeden Eintrag in dieser Liste eine eigene Auftragsbestätigung"</span></li>
+          <li><span class="step-num">3</span><span>"Kombiniere alle PDFs im Ordner zu einem einzigen Dokument"</span></li>
+        </ol>
+      </div>
+    </div>
+    <div class="highlight success">Was früher 2 Stunden dauerte, geht jetzt in 5 Minuten.</div>
+    <div class="trainer-box">
+      <span class="t-badge">Trainer</span>
+      <div class="t-text">Diese Folie erklärt — die Live-Demo kommt auf der nächsten Folie. Kurze Diskussion: Welche dieser Aufgaben kennen die Teilnehmer aus ihrem Alltag?</div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 4 · Cowork, Projekte &amp; Ordner</span>
+  </div>
+</div>
+
+<!-- FOLIE 13 -->
+<div class="slide" id="slide12">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 4 · Cowork, Projekte &amp; Ordner</div>
+      <div class="slide-title">🎯 Cowork live — ein kompletter Workflow</div>
+    </div>
+    <div class="slide-meta">Folie 13 / 17</div>
+  </div>
+  <div class="slide-body">
+    <div class="flow-row">
+      <div class="flow-step"><span class="fs-icon">📂</span><div class="fs-label">Schritt 1</div>Ordner verbinden<br>"Schriftverkehr 2025"</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><span class="fs-icon">💬</span><div class="fs-label">Schritt 2</div>Auftrag geben:<br>Auftragsbestätigung Stadtgemeinde Linz, Pflasterarbeiten, € 38.500,–</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><span class="fs-icon">⚙️</span><div class="fs-label">Schritt 3</div>Claude arbeitet:<br>Dokument wird erstellt mit Briefkopf</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><span class="fs-icon">📄</span><div class="fs-label">Schritt 4</div>Datei fertig:<br>.docx im Ordner gespeichert</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><span class="fs-icon">✉️</span><div class="fs-label">Schritt 5</div>Versenden:<br>Öffnen, prüfen, per E-Mail senden</div>
+    </div>
+    <div class="highlight">Gesamtzeit: ca. 2 Minuten. Ohne Claude: 15–20 Minuten.</div>
+    <div class="trainer-box">
+      <span class="t-badge">Trainer · Live-Demo</span>
+      <div class="t-text">Diesen Workflow jetzt live vorführen: Ordner bereits verbunden, Prompt eingeben, Dokument erstellen lassen, Datei im Explorer zeigen. Teilnehmer schauen zu — kein eigenes Gerät nötig.</div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 4 · Cowork, Projekte &amp; Ordner</span>
+  </div>
+</div>
+
+<!-- FOLIE 14 -->
+<div class="slide" id="slide13">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 4 · Cowork &amp; Projekte</div>
+      <div class="slide-title">🔌 Konnektoren — kurzer Ausblick</div>
+    </div>
+    <div class="slide-meta">Folie 14 / 17</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Was sind Konnektoren?</div>
+        <ul class="icon-list" style="margin-top:8px;">
+          <li><span class="ico">🔌</span><span>Verbindungen zu externen Diensten</span></li>
+          <li><span class="ico">📧</span><span>Claude kann direkt auf Google Mail, Kalender, Drive zugreifen</span></li>
+          <li><span class="ico">💼</span><span>Auch Microsoft Outlook, OneDrive, Slack, Teams, Zoom</span></li>
+          <li><span class="ico">🚫</span><span>Kein Kopieren mehr zwischen Apps nötig</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="section-label">Beispiele</div>
+        <ol class="step-list" style="margin-top:8px;">
+          <li><span class="step-num">1</span><span>"Zeig mir meine ungelesenen E-Mails von heute"</span></li>
+          <li><span class="step-num">2</span><span>"Wann bin ich diese Woche verfügbar? Schreib eine Einladung für Dienstag 10 Uhr"</span></li>
+          <li><span class="step-num">3</span><span>"Erstell eine Zusammenfassung der letzten 5 E-Mails von Kunde Müller"</span></li>
+        </ol>
+      </div>
+    </div>
+    <div class="highlight warn">Details zu Konnektoren kommen in Block 5 — hier nur ein kurzer Vorgeschmack.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 4 · Cowork &amp; Projekte</span>
+  </div>
+</div>
+
+<!-- FOLIE 15 -->
+<div class="slide" id="slide14">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 4 · Cowork &amp; Projekte</div>
+      <div class="slide-title">📧 Konnektoren live — Mail und Kalender</div>
+    </div>
+    <div class="slide-meta">Folie 15 / 17</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Google Mail Demo</div>
+        <div class="mock-chat" style="margin-top:8px;">
+          <div class="mock-bubble user">Was sind meine 3 wichtigsten ungelesenen E-Mails heute?</div>
+          <div class="mock-bubble claude">Ihre 3 wichtigsten ungelesenen E-Mails:<br>1. Holzbau Müller: Lieferverzögerung Kanthölzer (heute 09:14)<br>2. Stadtgemeinde Linz: Rückfrage zu Angebot 2025-047 (heute 08:32)<br>3. AUVA: Erinnerung Sicherheitsunterweisung bis 31. Mai (gestern)</div>
+        </div>
+      </div>
+      <div>
+        <div class="section-label">Google Kalender Demo</div>
+        <div class="mock-chat" style="margin-top:8px;">
+          <div class="mock-bubble user">Wann habe ich diese Woche noch freie Termine für ein 1-Stunden-Meeting?</div>
+          <div class="mock-bubble claude">Diese Woche noch frei: Mittwoch 14–15 Uhr, Donnerstag 10–12 Uhr und 15–16 Uhr, Freitag Vormittag bis 11 Uhr. Soll ich eine Meeting-Einladung für einen dieser Termine erstellen?</div>
+        </div>
+      </div>
+    </div>
+    <div class="highlight success">Kein manuelles Öffnen von Mail oder Kalender mehr — alles direkt im Chat.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 4 · Cowork &amp; Projekte</span>
+  </div>
+</div>
+
+<!-- FOLIE 16 -->
+<div class="slide" id="slide15">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 4 · Cowork &amp; Projekte</div>
+      <div class="slide-title">🔍 Websuche — aktuelle Informationen</div>
+    </div>
+    <div class="slide-meta">Folie 16 / 17</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Wann ist Websuche wichtig</div>
+        <ul class="icon-list" style="margin-top:8px;">
+          <li><span class="ico">💰</span><span>Aktuelle Preise, Normen oder Vorschriften nachschlagen</span></li>
+          <li><span class="ico">🔍</span><span>Neue Lieferanten recherchieren</span></li>
+          <li><span class="ico">⚖️</span><span>Gesetzliche Änderungen prüfen</span></li>
+          <li><span class="ico">📰</span><span>Aktuelle Nachrichten zu einem Thema</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="section-label">So aktivieren Sie die Websuche</div>
+        <ol class="step-list" style="margin-top:8px;">
+          <li><span class="step-num">1</span><span>Im Chat-Eingabefeld: Such-Icon (Lupe) klicken</span></li>
+          <li><span class="step-num">2</span><span>Websuche ist jetzt aktiv — Claude durchsucht das Internet</span></li>
+          <li><span class="step-num">3</span><span>Ergebnis enthält Quellen und aktuelle Informationen</span></li>
+        </ol>
+        <div class="prompt-box" style="margin-top:10px;font-size:11.5px;">
+          "Welche ÖNORM gilt aktuell für Pflasterarbeiten in Österreich? Bitte mit Quelle."
+        </div>
+      </div>
+    </div>
+    <div class="highlight warn">Ohne aktive Websuche kennt Claude nur seinen Trainingsstand (Anfang 2025) — keine aktuellen Informationen!</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 4 · Cowork &amp; Projekte</span>
+  </div>
+</div>
+
+<!-- FOLIE 17 -->
+<div class="slide" id="slide16">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 4 · Cowork &amp; Projekte</div>
+      <div class="slide-title">🎯 Alles kombiniert — der Profi-Workflow</div>
+    </div>
+    <div class="slide-meta">Folie 17 / 17</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Stufe 1: Nur Chat</div>
+        <ul class="icon-list" style="margin-top:6px;margin-bottom:12px;">
+          <li><span class="ico">✉️</span><span>E-Mails schreiben</span></li>
+          <li><span class="ico">✏️</span><span>Texte formulieren</span></li>
+          <li><span class="ico">❓</span><span>Fragen beantworten</span></li>
+          <li><span class="ico">📄</span><span>Dokumente zusammenfassen</span></li>
+        </ul>
+        <div class="section-label">Stufe 2: Chat + Projekt</div>
+        <ul class="icon-list" style="margin-top:6px;">
+          <li><span class="ico">🏢</span><span>Briefkopf automatisch</span></li>
+          <li><span class="ico">📁</span><span>Vorlagen immer verfügbar</span></li>
+          <li><span class="ico">🔄</span><span>Kein Kontext wiederholen</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="section-label">Stufe 3: + Cowork + Konnektoren</div>
+        <ul class="icon-list" style="margin-top:6px;">
+          <li><span class="ico">💾</span><span>Dateien direkt speichern</span></li>
+          <li><span class="ico">📦</span><span>Mehrere Dokumente auf einmal</span></li>
+          <li><span class="ico">📧</span><span>E-Mails und Kalender direkt</span></li>
+          <li><span class="ico">⚙️</span><span>Vollautomatische Workflows</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="highlight success">Sie müssen nicht alles auf einmal einrichten. Starten Sie mit dem Chat — und erweitern Sie Schritt für Schritt.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 4 · Cowork &amp; Projekte</span>
+  </div>
+</div>
+
+<script>
+const total = 17;
+function goTo(n) {
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('slide' + n).classList.add('active');
+  document.getElementById('btn' + n).classList.add('active');
+}
+window.addEventListener('message', function(e) {
+  const active = document.querySelector('.slide.active');
+  const idx = active ? parseInt(active.id.replace('slide','')) : 0;
+  if (e.data === 'next' || e.data?.type === 'next') {
+    if (idx < total - 1) { goTo(idx + 1); }
+    else { window.parent.postMessage('blockEnd', '*'); }
+  } else if (e.data === 'prev' || e.data?.type === 'prev') {
+    if (idx > 0) { goTo(idx - 1); }
+    else { window.parent.postMessage('blockStart', '*'); }
+  }
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowRight' || e.key === ' ') {
+    e.preventDefault();
+    const active = document.querySelector('.slide.active');
+    const idx = active ? parseInt(active.id.replace('slide','')) : 0;
+    if (idx < total - 1) goTo(idx + 1);
+    else window.parent.postMessage('blockEnd', '*');
+  } else if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    const active = document.querySelector('.slide.active');
+    const idx = active ? parseInt(active.id.replace('slide','')) : 0;
+    if (idx > 0) goTo(idx - 1);
+    else window.parent.postMessage('blockStart', '*');
+  }
+});
+</script>
+</body>
+</html>

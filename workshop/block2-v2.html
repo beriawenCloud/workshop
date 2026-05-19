@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Block 2 – Die Oberfläche | Claude-Workshop</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #f7f5f0;
+    --header-dark: #2b2b2b;
+    --accent: #4a6fa5;
+    --accent-light: #e8eef7;
+    --accent-mid: #7a9bc8;
+    --text-dark: #1e1e1e;
+    --text-mid: #4a4a4a;
+    --text-light: #7a7a7a;
+    --border: #ddd8cf;
+    --white: #ffffff;
+    --success: #3a7d5a;
+    --success-bg: #edf7f2;
+    --warn: #b5621a;
+    --warn-bg: #fff7ef;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #3a3a3a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    gap: 16px;
+    min-height: 100vh;
+  }
+  .nav { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; max-width:980px; }
+  .nav button {
+    background:#555; color:#fff; border:none; padding:5px 11px; border-radius:4px;
+    font-family:'DM Sans',sans-serif; font-size:11px; cursor:pointer; transition:background 0.2s; white-space:nowrap;
+  }
+  .nav button:hover { background:var(--accent); }
+  .nav button.active { background:var(--accent); }
+
+  .slide {
+    width:960px; max-width:100%; background:var(--cream); border-radius:4px;
+    overflow:hidden; box-shadow:0 8px 40px rgba(0,0,0,0.45);
+    display:none; flex-direction:column; min-height:540px;
+  }
+  .slide.active { display:flex; }
+
+  .slide-header {
+    background:var(--header-dark); color:var(--white);
+    padding:16px 36px 14px; display:flex; justify-content:space-between; align-items:flex-end;
+  }
+  .slide-header .block-label { font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent-mid); font-weight:500; }
+  .slide-header .slide-title { font-family:'DM Serif Display',serif; font-size:21px; line-height:1.25; margin-top:4px; }
+  .slide-header .slide-meta { font-size:11px; color:#999; text-align:right; line-height:1.6; }
+
+  .slide-body { flex:1; padding:24px 36px 18px; display:flex; flex-direction:column; gap:14px; }
+  .slide-footer { height:5px; background:var(--accent); }
+  .slide-footer-bar {
+    height:26px; background:#f0ece4; border-top:1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between; padding:0 36px;
+  }
+  .slide-footer-bar span { font-size:10px; color:var(--text-light); letter-spacing:0.06em; }
+
+  .cols-2 { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  .cols-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
+
+  .card { background:var(--white); border:1px solid var(--border); border-radius:6px; padding:14px 16px; }
+  .card-accent { border-left:4px solid var(--accent); }
+  .card h3 { font-size:12px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:7px; }
+  .card p { font-size:13px; color:var(--text-mid); line-height:1.55; }
+
+  .highlight { background:var(--accent-light); border-left:4px solid var(--accent); border-radius:4px; padding:10px 14px; font-size:13px; color:var(--text-dark); line-height:1.55; }
+  .highlight.warn { background:var(--warn-bg); border-left-color:var(--warn); color:#6b3a10; }
+  .highlight.success { background:var(--success-bg); border-left-color:var(--success); color:#1f4d35; }
+
+  .icon-list { list-style:none; display:flex; flex-direction:column; gap:8px; }
+  .icon-list li { display:flex; align-items:flex-start; gap:9px; font-size:13px; color:var(--text-mid); line-height:1.45; }
+  .icon-list li .ico { flex-shrink:0; width:20px; height:20px; border-radius:50%; background:var(--accent-light); display:flex; align-items:center; justify-content:center; font-size:11px; margin-top:1px; }
+  .icon-list li strong { color:var(--text-dark); }
+
+  .step-list { list-style:none; display:flex; flex-direction:column; gap:9px; }
+  .step-list li { display:flex; align-items:flex-start; gap:10px; font-size:13px; color:var(--text-mid); line-height:1.45; }
+  .step-num { flex-shrink:0; width:22px; height:22px; border-radius:50%; background:var(--accent); color:white; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+
+  .section-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--accent); border-bottom:2px solid var(--accent-light); padding-bottom:3px; margin-bottom:4px; }
+
+  .title-body { flex:1; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:14px; padding:32px 48px; text-align:center; }
+  .block-badge { background:var(--accent); color:white; font-size:12px; font-weight:600; padding:5px 16px; border-radius:20px; letter-spacing:0.06em; text-transform:uppercase; }
+  .title-body h1 { font-family:'DM Serif Display',serif; font-size:36px; color:var(--text-dark); line-height:1.2; }
+  .title-body .sub { font-size:14px; color:var(--text-mid); max-width:520px; line-height:1.55; }
+  .time-pill { display:inline-flex; align-items:center; gap:6px; background:#f0ece4; border:1px solid var(--border); padding:5px 14px; border-radius:20px; font-size:12px; color:var(--text-mid); }
+
+  .prompt-box { background:#1e1e1e; border-radius:6px; padding:13px 16px; font-size:12.5px; color:#d4e0f0; line-height:1.6; font-family:monospace; }
+  .prompt-box.light { background:#f0ece4; color:var(--text-dark); font-family:'DM Sans',sans-serif; }
+
+  table.simple { width:100%; border-collapse:collapse; font-size:12.5px; }
+  table.simple thead tr { background:var(--header-dark); color:white; }
+  table.simple thead th { padding:7px 10px; text-align:left; font-weight:600; }
+  table.simple tbody tr { border-bottom:1px solid var(--border); }
+  table.simple tbody tr:nth-child(odd) { background:#f9f7f4; }
+  table.simple tbody td { padding:7px 10px; color:var(--text-mid); }
+  table.simple tbody td:first-child { color:var(--text-dark); font-weight:600; }
+
+  .toggle-row { display:flex; align-items:center; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border); }
+  .toggle-row:last-child { border-bottom:none; }
+  .toggle-label { font-size:13px; color:var(--text-dark); }
+  .toggle-sub { font-size:11px; color:var(--text-light); }
+  .toggle-mock { flex-shrink:0; width:34px; height:18px; border-radius:9px; background:var(--accent); position:relative; }
+  .toggle-mock::after { content:''; position:absolute; top:2px; right:2px; width:14px; height:14px; border-radius:50%; background:white; }
+  .toggle-mock.off { background:#ccc; }
+  .toggle-mock.off::after { right:auto; left:2px; }
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <button onclick="goTo(0)" id="btn0" class="active">① Titel</button>
+  <button onclick="goTo(1)" id="btn1">② 3 Modi</button>
+  <button onclick="goTo(2)" id="btn2">③ Chat</button>
+  <button onclick="goTo(3)" id="btn3">④ Projekte</button>
+  <button onclick="goTo(4)" id="btn4">⑤ Artifacts</button>
+  <button onclick="goTo(5)" id="btn5">⑥ Customize</button>
+  <button onclick="goTo(6)" id="btn6">⑦ Cowork</button>
+  <button onclick="goTo(7)" id="btn7">⑧ Code</button>
+  <button onclick="goTo(8)" id="btn8">⑨ Einst. A</button>
+  <button onclick="goTo(9)" id="btn9">⑩ Einst. B</button>
+  <button onclick="goTo(10)" id="btn10">⑪ Einst. C</button>
+  <button onclick="goTo(11)" id="btn11">⑫ Skills/MD</button>
+</div>
+
+<!-- FOLIE 1 -->
+<div class="slide active" id="slide0">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 2 · Die Oberfläche</div>
+      <div class="slide-title">Was Sie wo finden — die Claude-Oberfläche</div>
+    </div>
+    <div class="slide-meta">Folie 1 / 12</div>
+  </div>
+  <div class="title-body">
+    <div class="block-badge">Block 2</div>
+    <h1>Die Oberfläche</h1>
+    <p class="sub">In diesem Block lernen Sie die wichtigsten Bereiche der Claude-Benutzeroberfläche kennen — von den drei Modi bis zu Einstellungen und Skills.</p>
+    <div class="time-pill">⏱ 20 Minuten</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 2 · Die Oberfläche</span>
+  </div>
+</div>
+
+<!-- FOLIE 2 -->
+<div class="slide" id="slide1">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 2 · Die Oberfläche</div>
+      <div class="slide-title">Claude hat drei Bereiche</div>
+    </div>
+    <div class="slide-meta">Folie 2 / 12</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-3">
+      <div class="card card-accent">
+        <h3>💬 Chat</h3>
+        <p>Das tägliche Werkzeug. Hier führen Sie Gespräche, laden Dateien hoch und erhalten Antworten. Kein Kontext wird zwischen verschiedenen Chats gespeichert.</p>
+      </div>
+      <div class="card card-accent">
+        <h3>📁 Projekte</h3>
+        <p>Für wiederkehrende Aufgaben. Projekte merken sich Anweisungen und Dateien dauerhaft. Ideal für Vorlagen, Briefköpfe, Standardtexte.</p>
+      </div>
+      <div class="card card-accent">
+        <h3>🖥️ Cowork (Desktop App)</h3>
+        <p>Verbindet Claude mit Ihrem Computer. Zugriff auf lokale Ordner, Konnektoren zu Google/Microsoft/Slack etc.</p>
+      </div>
+    </div>
+    <div class="highlight">Der einfachste Einstieg ist der Chat — dort machen wir heute auch alle Demos.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 2 · Die Oberfläche</span>
+  </div>
+</div>
+
+<!-- FOLIE 3 -->
+<div class="slide" id="slide2">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 2 · Die Oberfläche</div>
+      <div class="slide-title">💬 Der Chat — wo alles beginnt</div>
+    </div>
+    <div class="slide-meta">Folie 3 / 12</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Was der Chat kann</div>
+        <ul class="icon-list" style="margin-top:8px;">
+          <li><span class="ico">✓</span><span>Fragen stellen und Antworten erhalten</span></li>
+          <li><span class="ico">✓</span><span>Texte schreiben, umformulieren, übersetzen</span></li>
+          <li><span class="ico">✓</span><span>Dateien hochladen und analysieren (PDF, Word, Bilder)</span></li>
+          <li><span class="ico">✓</span><span>Code und Tabellen erstellen</span></li>
+          <li><span class="ico">✓</span><span>Websuche (Such-Icon im Eingabefeld aktivieren)</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="section-label">Was der Chat nicht kann</div>
+        <ul class="icon-list" style="margin-top:8px;">
+          <li><span class="ico" style="background:#fff0ec;">✗</span><span>Keinen Kontext aus früheren Chats merken (ohne Projekte)</span></li>
+          <li><span class="ico" style="background:#fff0ec;">✗</span><span>Keine Dateien auf Ihrem Computer speichern (ohne Cowork)</span></li>
+          <li><span class="ico" style="background:#fff0ec;">✗</span><span>Nicht eigenständig E-Mails versenden</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="highlight warn">Jeder neue Chat beginnt bei null — was Claude aus einem alten Chat wissen soll, müssen Sie neu erklären oder in einem Projekt speichern.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 2 · Die Oberfläche</span>
+  </div>
+</div>
+
+<!-- FOLIE 4 -->
+<div class="slide" id="slide3">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 2 · Die Oberfläche</div>
+      <div class="slide-title">📁 Projekte — Claude mit Gedächtnis</div>
+    </div>
+    <div class="slide-meta">Folie 4 / 12</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Was ein Projekt speichert</div>
+        <ol class="step-list" style="margin-top:8px;">
+          <li><span class="step-num">1</span><span><strong>Anweisungen:</strong> Briefkopf, Ton, Unternehmensinfos, wiederkehrende Formulierungen</span></li>
+          <li><span class="step-num">2</span><span><strong>Dateien:</strong> Vorlagen, Checklisten, Handbücher — Claude kennt den Inhalt</span></li>
+          <li><span class="step-num">3</span><span><strong>Kontext:</strong> Alles bleibt erhalten, jeder neue Chat im Projekt startet mit diesem Wissen</span></li>
+        </ol>
+      </div>
+      <div>
+        <div class="section-label">Wann ein Projekt sinnvoll ist</div>
+        <ul class="icon-list" style="margin-top:8px;">
+          <li><span class="ico">✉️</span><span><strong>Schriftverkehr:</strong> Immer gleicher Briefkopf und Ton</span></li>
+          <li><span class="ico">📝</span><span><strong>Protokolle:</strong> Immer gleiche Struktur und Teilnehmer</span></li>
+          <li><span class="ico">✅</span><span><strong>Checklisten:</strong> Wiederkehrende Standards</span></li>
+          <li><span class="ico">👥</span><span><strong>Team:</strong> Mehrere Personen nutzen dieselben Vorgaben</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="highlight success">Einmal einrichten, dauerhaft schneller arbeiten.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 2 · Die Oberfläche</span>
+  </div>
+</div>
+
+<!-- FOLIE 5 -->
+<div class="slide" id="slide4">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 2 · Die Oberfläche</div>
+      <div class="slide-title">📄 Artifacts — Dokumente direkt im Chat</div>
+    </div>
+    <div class="slide-meta">Folie 5 / 12</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Was ist ein Artifact?</div>
+        <p style="font-size:13px;color:var(--text-mid);line-height:1.55;margin-top:8px;margin-bottom:10px;">Wenn Claude ein längeres Dokument, eine Tabelle oder eine strukturierte Ausgabe erstellt, erscheint diese in einem eigenen Bereich rechts neben dem Chat — dem Artifact-Bereich. Dort lässt sich der Inhalt direkt kopieren.</p>
+        <ul class="icon-list">
+          <li><span class="ico">📄</span><span>Formatierte Texte und Briefe</span></li>
+          <li><span class="ico">📊</span><span>Tabellen (direkt nach Excel kopieren)</span></li>
+          <li><span class="ico">💻</span><span>HTML-Seiten und Code</span></li>
+          <li><span class="ico">📋</span><span>Strukturierte Listen und Protokolle</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="section-label">Was Artifacts NICHT sind</div>
+        <div class="highlight warn" style="margin-top:8px;">
+          Artifacts sind keine gespeicherten Dateien! Der Inhalt existiert nur im aktuellen Chat. Zum Speichern: Inhalt kopieren und in Word/Excel einfügen — oder Claude bitten, eine Datei zu erstellen (mit Cowork).
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 2 · Die Oberfläche</span>
+  </div>
+</div>
+
+<!-- FOLIE 6 -->
+<div class="slide" id="slide5">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 2 · Die Oberfläche</div>
+      <div class="slide-title">⚙️ Personalisierung — Claude kennenlernen</div>
+    </div>
+    <div class="slide-meta">Folie 6 / 12</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Wo finden Sie die Einstellungen</div>
+        <p style="font-size:13px;color:var(--text-mid);line-height:1.55;margin-top:8px;margin-bottom:10px;">Oben rechts → Ihr Profilbild → Einstellungen. Dort können Sie Claude mitteilen, wer Sie sind und wie er mit Ihnen kommunizieren soll.</p>
+        <ol class="step-list">
+          <li><span class="step-num">1</span><span><strong>Profil:</strong> Name, Beruf, was Claude über Sie wissen soll</span></li>
+          <li><span class="step-num">2</span><span><strong>Kommunikation:</strong> Wie ausführlich, welcher Ton, welche Sprache</span></li>
+          <li><span class="step-num">3</span><span><strong>Speichern:</strong> Einstellungen gelten für alle neuen Chats</span></li>
+        </ol>
+      </div>
+      <div>
+        <div class="section-label">Beispiel-Einstellung</div>
+        <div class="prompt-box" style="margin-top:8px;font-size:12px;">
+          "Ich bin Sekretärin bei einem Bauunternehmen in Österreich. Ich nutze Claude hauptsächlich für Schriftverkehr, Protokolle und Dokumentenerstellung. Bitte schreib immer auf Deutsch, professionell und klar. Keine unnötig langen Antworten."
+        </div>
+      </div>
+    </div>
+    <div class="highlight">Diese Einstellungen sparen Ihnen bei jedem Chat das erneute Erklären — Claude weiß dann immer, wer Sie sind.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 2 · Die Oberfläche</span>
+  </div>
+</div>
+
+<!-- FOLIE 7 -->
+<div class="slide" id="slide6">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 2 · Die Oberfläche</div>
+      <div class="slide-title">🖥️ Cowork — Claude auf Ihrem Computer</div>
+    </div>
+    <div class="slide-meta">Folie 7 / 12</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Was Cowork zusätzlich kann</div>
+        <ul class="icon-list" style="margin-top:8px;">
+          <li><span class="ico">💾</span><span>Dateien direkt auf Ihrem Computer erstellen und speichern</span></li>
+          <li><span class="ico">📂</span><span>Ordner verbinden und Dateien lesen</span></li>
+          <li><span class="ico">🔌</span><span>Konnektoren: Google Mail, Kalender, Drive, Microsoft 365, Slack, Teams</span></li>
+          <li><span class="ico">📄</span><span>Mehrere Dateien auf einmal bearbeiten</span></li>
+          <li><span class="ico">🖨️</span><span>Als PDF exportieren</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="card card-accent">
+          <h3>Was Sie brauchen</h3>
+          <ul class="icon-list">
+            <li><span class="ico">⬇️</span><span>Claude Desktop App installiert (claude.ai/download)</span></li>
+            <li><span class="ico">⭐</span><span>Pro-Plan aktiv</span></li>
+            <li><span class="ico">🔗</span><span>Ordner oder Dienst einmalig verbinden</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="highlight warn">Cowork ist optional — alles im Chat funktioniert auch ohne Desktop App. Für Dateioperationen auf Ihrem Computer ist Cowork aber sehr praktisch.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 2 · Die Oberfläche</span>
+  </div>
+</div>
+
+<!-- FOLIE 8 -->
+<div class="slide" id="slide7">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 2 · Die Oberfläche</div>
+      <div class="slide-title">💻 Claude Code — für Entwickler (zur Info)</div>
+    </div>
+    <div class="slide-meta">Folie 8 / 12</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Was ist Claude Code?</div>
+        <p style="font-size:13px;color:var(--text-mid);line-height:1.55;margin-top:8px;margin-bottom:10px;">Claude Code ist ein separates Kommandozeilen-Tool für Software-Entwickler. Es läuft im Terminal und ermöglicht es, Code direkt in Projekten zu schreiben und auszuführen. Das ist NICHT derselbe "Code"-Tab, den man manchmal im Chat sieht.</p>
+        <div class="highlight warn">Für den Büroalltag nicht relevant — Claude Code ist ein spezialisiertes Entwickler-Tool. Wir erwähnen es nur, damit Sie es nicht verwechseln, falls Sie den Begriff hören.</div>
+      </div>
+      <div>
+        <div class="section-label">Was Sie stattdessen nutzen</div>
+        <ul class="icon-list" style="margin-top:8px;">
+          <li><span class="ico">🌐</span><span><strong>Claude.ai im Browser:</strong> Für alle täglichen Aufgaben</span></li>
+          <li><span class="ico">🖥️</span><span><strong>Claude Desktop App (Cowork):</strong> Für Dateioperationen</span></li>
+          <li><span class="ico">🔌</span><span><strong>Konnektoren:</strong> Für Verbindung zu Google/Microsoft etc.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 2 · Die Oberfläche</span>
+  </div>
+</div>
+
+<!-- FOLIE 9 -->
+<div class="slide" id="slide8">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 2 · Die Oberfläche</div>
+      <div class="slide-title">⚙️ Einstellungen — Sprache und Ton</div>
+    </div>
+    <div class="slide-meta">Folie 9 / 12</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Was Sie einstellen können</div>
+        <ol class="step-list" style="margin-top:8px;">
+          <li><span class="step-num">1</span><span><strong>Sprache:</strong> Deutsch als Standardsprache festlegen</span></li>
+          <li><span class="step-num">2</span><span><strong>Ton:</strong> Formell, freundlich, prägnant — wie Claude schreiben soll</span></li>
+          <li><span class="step-num">3</span><span><strong>Länge:</strong> Kurze Antworten oder ausführliche Erklärungen</span></li>
+        </ol>
+      </div>
+      <div>
+        <div class="section-label">Beispiel-Profil</div>
+        <div class="prompt-box" style="margin-top:8px;font-size:12px;">
+          Name: Sandra G.<br>
+          Beruf: Büroleitung, Grundstein Bau GmbH<br>
+          Sprache: Immer Deutsch<br>
+          Stil: Professionell, österreichisches Deutsch, nicht zu förmlich<br>
+          Besonderheiten: Für Schriftverkehr bitte immer Briefkopf vorschlagen
+        </div>
+      </div>
+    </div>
+    <div class="highlight success">Einmal eingestellt — gilt für alle Chats automatisch.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 2 · Die Oberfläche</span>
+  </div>
+</div>
+
+<!-- FOLIE 10 -->
+<div class="slide" id="slide9">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 2 · Die Oberfläche</div>
+      <div class="slide-title">🧠 Memory — Claude merkt sich wichtige Dinge</div>
+    </div>
+    <div class="slide-meta">Folie 10 / 12</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Was ist Memory?</div>
+        <p style="font-size:13px;color:var(--text-mid);line-height:1.55;margin-top:8px;margin-bottom:10px;">Memory ist eine optionale Funktion: Claude kann sich wichtige Informationen über Sie dauerhaft merken — über einzelne Chats hinaus. Zum Beispiel: Ihr Name, Ihr Unternehmen, Ihre Präferenzen.</p>
+        <ol class="step-list">
+          <li><span class="step-num">1</span><span><strong>Memory aktivieren:</strong> Einstellungen → Memory → einschalten</span></li>
+          <li><span class="step-num">2</span><span><strong>Claude speichert automatisch:</strong> Was er für relevant hält</span></li>
+          <li><span class="step-num">3</span><span><strong>Sie können prüfen und löschen:</strong> Einstellungen → Memory → anzeigen</span></li>
+        </ol>
+      </div>
+      <div>
+        <div class="section-label">Unterschied Projekt vs. Memory</div>
+        <table class="simple" style="margin-top:8px;font-size:12px;">
+          <thead>
+            <tr><th></th><th>Projekt</th><th>Memory</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Was?</td><td>Anweisungen + Dateien</td><td>Fakten über Sie</td></tr>
+            <tr><td>Wo?</td><td>Ein Projekt</td><td>Alle Chats</td></tr>
+            <tr><td>Kontrolle?</td><td>Sie schreiben es</td><td>Claude lernt es</td></tr>
+            <tr><td>Löschen?</td><td>Projektanweisungen</td><td>Einstellungen → Memory</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="highlight warn">Memory muss erst aktiviert werden — es ist standardmäßig ausgeschaltet.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 2 · Die Oberfläche</span>
+  </div>
+</div>
+
+<!-- FOLIE 11 -->
+<div class="slide" id="slide10">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 2 · Die Oberfläche</div>
+      <div class="slide-title">🔒 Einstellungen — Datenschutz und Unternehmenskonto</div>
+    </div>
+    <div class="slide-meta">Folie 11 / 12</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Datenschutz-Einstellungen</div>
+        <ul class="icon-list" style="margin-top:8px;">
+          <li><span class="ico">🛡️</span><span><strong>Trainings-Opt-out:</strong> Im Pro-Plan werden Ihre Chats standardmäßig nicht für Training verwendet</span></li>
+          <li><span class="ico">🗑️</span><span><strong>Daten-Löschung:</strong> Chats können jederzeit gelöscht werden</span></li>
+          <li><span class="ico">🚫</span><span><strong>Kein Speichern sensibler Daten:</strong> Keine echten Kundendaten, Passwörter oder vertrauliche Dokumente eingeben</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="card card-accent">
+          <h3>Microsoft 365 Integration</h3>
+          <p>Ob Claude auf Outlook, OneDrive oder Teams zugreifen darf, hängt von Ihrer IT-Abteilung ab. In vielen Unternehmen müssen solche Verbindungen erst freigegeben werden. Fragen Sie ggf. kurz nach, bevor Sie Konnektoren einrichten.</p>
+        </div>
+      </div>
+    </div>
+    <div class="highlight">Grundregel: Nichts in Claude eingeben, was Sie nicht auch per E-Mail verschicken würden.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 2 · Die Oberfläche</span>
+  </div>
+</div>
+
+<!-- FOLIE 12 -->
+<div class="slide" id="slide11">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 2 · Vorschau</div>
+      <div class="slide-title">Skills & Wissensdokumente — kommt in Block 4</div>
+    </div>
+    <div class="slide-meta">Folie 12 / 12</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label">Was sind Projekt-Skills?</div>
+        <p style="font-size:13px;color:var(--text-mid);line-height:1.55;margin-top:8px;margin-bottom:10px;">In einem Projekt können Sie nicht nur Anweisungen schreiben, sondern auch ganze Dokumente hochladen: Preislisten, Vertragsvorlagen, interne Richtlinien. Claude kennt dann deren Inhalt und kann darauf zugreifen.</p>
+        <div class="prompt-box light" style="font-size:12px;">
+          Beispiel: "Welche Zahlungsbedingungen stehen in unserem Standardvertrag?" → Claude liest das hochgeladene Dokument und antwortet.
+        </div>
+      </div>
+      <div>
+        <div class="card card-accent">
+          <h3>In Block 4 lernen Sie</h3>
+          <ul class="icon-list" style="margin-top:4px;">
+            <li><span class="ico">📐</span><span>Wie Sie ein Projekt richtig einrichten</span></li>
+            <li><span class="ico">📎</span><span>Welche Dateien sinnvoll sind</span></li>
+            <li><span class="ico">✏️</span><span>Wie Sie Anweisungen formulieren, die Claude wirklich helfen</span></li>
+            <li><span class="ico">🎯</span><span>Praxis-Demo: Projekt für Schriftverkehr anlegen</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="highlight success">Projekte + hochgeladene Dokumente = Claude als persönlicher Assistent, der Ihr Unternehmen kennt.</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 2 · Die Oberfläche</span>
+  </div>
+</div>
+
+<script>
+const total = 12;
+function goTo(n) {
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('slide' + n).classList.add('active');
+  document.getElementById('btn' + n).classList.add('active');
+}
+window.addEventListener('message', function(e) {
+  
+  const active = document.querySelector('.slide.active');
+  const idx = active ? parseInt(active.id.replace('slide','')) : 0;
+  if (e.data === 'next' || e.data?.type === 'next') {
+    if (idx < total - 1) { goTo(idx + 1); }
+    else { window.parent.postMessage('blockEnd', '*'); }
+  } else if (e.data === 'prev' || e.data?.type === 'prev') {
+    if (idx > 0) { goTo(idx - 1); }
+    else { window.parent.postMessage('blockStart', '*'); }
+  }
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowRight' || e.key === ' ') {
+    e.preventDefault();
+    const active = document.querySelector('.slide.active');
+    const idx = active ? parseInt(active.id.replace('slide','')) : 0;
+    if (idx < total - 1) goTo(idx + 1);
+    else window.parent.postMessage('blockEnd', '*');
+  } else if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    const active = document.querySelector('.slide.active');
+    const idx = active ? parseInt(active.id.replace('slide','')) : 0;
+    if (idx > 0) goTo(idx - 1);
+    else window.parent.postMessage('blockStart', '*');
+  }
+});
+</script>
+</body>
+</html>

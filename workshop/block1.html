@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Block 1 – Was ist Claude? | Claude-Workshop</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #f7f5f0;
+    --header-dark: #2b2b2b;
+    --accent: #4a6fa5;
+    --accent-light: #e8eef7;
+    --accent-mid: #7a9bc8;
+    --text-dark: #1e1e1e;
+    --text-mid: #4a4a4a;
+    --text-light: #7a7a7a;
+    --border: #ddd8cf;
+    --white: #ffffff;
+    --footer-stripe: #4a6fa5;
+    --success: #3a7d5a;
+    --success-bg: #edf7f2;
+    --warn: #b5621a;
+    --warn-bg: #fff7ef;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #3a3a3a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    gap: 16px;
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  .nav {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 980px;
+  }
+  .nav button {
+    background: #555;
+    color: #fff;
+    border: none;
+    padding: 5px 13px;
+    border-radius: 4px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .nav button:hover { background: var(--accent); }
+  .nav button.active { background: var(--accent); }
+
+  /* SLIDE */
+  .slide {
+    width: 960px;
+    max-width: 100%;
+    background: var(--cream);
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.45);
+    display: none;
+    flex-direction: column;
+    min-height: 540px;
+  }
+  .slide.active { display: flex; }
+
+  /* HEADER */
+  .slide-header {
+    background: var(--header-dark);
+    color: var(--white);
+    padding: 16px 36px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .block-label {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent-mid);
+    font-weight: 500;
+  }
+  .slide-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 21px;
+    line-height: 1.25;
+    margin-top: 4px;
+  }
+  .slide-meta {
+    font-size: 11px;
+    color: #999;
+    text-align: right;
+    line-height: 1.6;
+  }
+
+  /* BODY */
+  .slide-body {
+    flex: 1;
+    padding: 24px 36px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  /* FOOTER */
+  .slide-footer { height: 5px; background: var(--footer-stripe); }
+  .slide-footer-bar {
+    height: 26px;
+    background: #f0ece4;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 36px;
+  }
+  .slide-footer-bar span { font-size: 10px; color: var(--text-light); letter-spacing: 0.06em; }
+
+  /* LAYOUT */
+  .cols-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .cols-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  .cols-2-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 18px; }
+
+  /* CARD */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+  }
+  .card-accent { border-left: 4px solid var(--accent); }
+  .card h3 {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 7px;
+  }
+  .card p { font-size: 13px; color: var(--text-mid); line-height: 1.55; }
+
+  /* HIGHLIGHT */
+  .highlight {
+    background: var(--accent-light);
+    border-left: 4px solid var(--accent);
+    border-radius: 4px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--text-dark);
+    line-height: 1.55;
+  }
+  .highlight.warn { background: var(--warn-bg); border-left-color: var(--warn); color: #6b3a10; }
+  .highlight.success { background: var(--success-bg); border-left-color: var(--success); color: #1f4d35; }
+
+  /* ICON LIST */
+  .icon-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .icon-list li {
+    display: flex; align-items: flex-start; gap: 9px;
+    font-size: 13px; color: var(--text-mid); line-height: 1.45;
+  }
+  .icon-list li .ico {
+    flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%;
+    background: var(--accent-light); display: flex; align-items: center;
+    justify-content: center; font-size: 11px; margin-top: 1px;
+  }
+  .icon-list li strong { color: var(--text-dark); }
+
+  /* SECTION LABEL */
+  .section-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--accent);
+    border-bottom: 2px solid var(--accent-light);
+    padding-bottom: 3px; margin-bottom: 4px;
+  }
+
+  /* TITLE SLIDE */
+  .title-body {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 14px; padding: 32px 48px; text-align: center;
+  }
+  .block-badge {
+    background: var(--accent); color: white; font-size: 12px; font-weight: 600;
+    padding: 5px 16px; border-radius: 20px; letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .title-body h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 36px; color: var(--text-dark); line-height: 1.2;
+  }
+  .title-body .sub {
+    font-size: 14px; color: var(--text-mid); max-width: 520px; line-height: 1.55;
+  }
+  .time-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #f0ece4; border: 1px solid var(--border);
+    padding: 5px 14px; border-radius: 20px; font-size: 12px; color: var(--text-mid);
+  }
+
+  /* TABLE */
+  table.simple { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  table.simple thead tr { background: var(--header-dark); color: white; }
+  table.simple thead th { padding: 8px 12px; text-align: left; font-weight: 600; }
+  table.simple tbody tr { border-bottom: 1px solid var(--border); }
+  table.simple tbody tr:nth-child(odd) { background: #f9f7f4; }
+  table.simple tbody td { padding: 8px 12px; color: var(--text-mid); vertical-align: top; }
+  table.simple tbody td:first-child { color: var(--text-dark); font-weight: 600; }
+  table.simple .yes { color: var(--success); font-weight: 700; }
+  table.simple .no { color: #c0392b; font-weight: 700; }
+  table.simple .part { color: var(--warn); font-weight: 600; }
+
+  /* EINSTIEG KARTEN */
+  .stress-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+  .stress-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: var(--accent);
+  }
+  .stress-card .s-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 42px;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .stress-card .s-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-dark);
+  }
+  .stress-card .s-desc {
+    font-size: 12px;
+    color: var(--text-light);
+    line-height: 1.45;
+  }
+
+  /* WAS IST CLAUDE */
+  .nicht-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .nicht-card .n-icon { font-size: 24px; flex-shrink: 0; }
+  .nicht-card .n-title { font-size: 13px; font-weight: 700; color: var(--text-dark); margin-bottom: 3px; }
+  .nicht-card .n-desc { font-size: 12px; color: var(--text-mid); line-height: 1.45; }
+  .nicht-card.crossed { opacity: 0.7; }
+  .nicht-card.crossed .n-title { text-decoration: line-through; color: #999; }
+
+  /* GOLDENE REGEL */
+  .golden-box {
+    background: var(--header-dark);
+    border-radius: 8px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .golden-box .g-icon { font-size: 36px; flex-shrink: 0; }
+  .golden-box .g-text { color: white; }
+  .golden-box .g-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent-mid);
+    margin-bottom: 4px;
+  }
+  .golden-box .g-regel {
+    font-family: 'DM Serif Display', serif;
+    font-size: 19px;
+    color: white;
+    line-height: 1.3;
+  }
+  .golden-box .g-sub {
+    font-size: 12px;
+    color: #aaa;
+    margin-top: 6px;
+    line-height: 1.45;
+  }
+
+  /* PRO FEATURES */
+  .pro-item {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 11px 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .pro-item .p-icon {
+    flex-shrink: 0;
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    background: var(--accent-light);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .pro-item .p-title { font-size: 13px; font-weight: 700; color: var(--text-dark); margin-bottom: 2px; }
+  .pro-item .p-desc { font-size: 12px; color: var(--text-mid); line-height: 1.4; }
+
+  .pill { display: inline-block; background: var(--accent-light); color: var(--accent); font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px; }
+  .pill.warn { background: var(--warn-bg); color: var(--warn); }
+  .pill.dark { background: #2b2b2b; color: #ccc; }
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <button onclick="goTo(0)" id="btn0" class="active">① Titel</button>
+  <button onclick="goTo(1)" id="btn1">② Einstieg</button>
+  <button onclick="goTo(2)" id="btn2">③ Was ist Claude?</button>
+  <button onclick="goTo(3)" id="btn3">④ Claude vs. Google</button>
+  <button onclick="goTo(4)" id="btn4">⑤ Claude vs. ChatGPT</button>
+  <button onclick="goTo(5)" id="btn5">⑥ Claude Pro</button>
+  <button onclick="goTo(6)" id="btn6">⑦ Was Claude nicht kann</button>
+</div>
+
+<!-- ===== F1: TITEL ===== -->
+<div class="slide active" id="slide0">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 1 · 25 Minuten</div>
+      <div class="slide-title">Was ist Claude — und warum nicht einfach Google?</div>
+    </div>
+    <div class="slide-meta">Workshop „Claude im Büroalltag"<br>Grundstein Bau GmbH · Linz</div>
+  </div>
+  <div class="title-body">
+    <div class="block-badge">Block 1</div>
+    <h1>Was ist Claude —<br>und warum nicht<br>einfach Google?</h1>
+    <p class="sub">Ein ehrlicher Überblick: Was kann Claude wirklich, was kann er nicht — und warum lohnt es sich, ihn in den Büroalltag einzubauen?</p>
+    <div class="time-pill">🕐 25 Minuten</div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar"><span>BLOCK 1 / FOLIE 1</span><span>Grundstein Bau GmbH · Linz</span></div>
+</div>
+
+<!-- ===== F2: EINSTIEG ===== -->
+<div class="slide" id="slide1">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 1 · Einstieg</div>
+      <div class="slide-title">Stellen Sie sich vor: Montag, 8:47 Uhr</div>
+    </div>
+    <div class="slide-meta">Folie 2 / 7</div>
+  </div>
+  <div class="slide-body">
+    <p style="font-size:13.5px; color:var(--text-mid); line-height:1.55;">Der Computer startet. Das Postfach öffnet sich. Und dann …</p>
+    <div class="cols-3" style="flex:1; align-items:stretch;">
+      <div class="stress-card">
+        <div class="s-num">47</div>
+        <div class="s-label">neue E-Mails</div>
+        <div class="s-desc">Seit Freitagabend. Davon 12 mit „dringend" im Betreff. Drei brauchen eine ausführliche Antwort — auf Deutsch, freundlich, professionell.</div>
+      </div>
+      <div class="stress-card">
+        <div class="s-num">1</div>
+        <div class="s-label">Protokoll fehlt noch</div>
+        <div class="s-desc">Von der Baubesprechung am Freitag. Die Notizen liegen auf dem Tisch. Daraus soll bis 10 Uhr ein sauberes Dokument werden — mit Beschlüssen und Zuständigkeiten.</div>
+      </div>
+      <div class="stress-card">
+        <div class="s-num">9:00</div>
+        <div class="s-label">Angebot muss raus</div>
+        <div class="s-desc">Kunde Huber wartet auf ein Angebot für Umbauarbeiten. Inklusive Positionen, Preisen und Briefkopf. Die Vorlage ist irgendwo im Netzwerk.</div>
+      </div>
+    </div>
+    <div class="highlight" style="font-size:13.5px; text-align:center;">
+      Was wäre, wenn Sie jetzt jemanden hätten, dem Sie einfach sagen können: <strong>„Kümmere dich darum"?</strong>
+    </div>
+    <div class="highlight success" style="font-size:13px;">
+      Genau das ist Claude — kein Wundermittel, aber ein sehr fähiger Assistent für genau diese Art von Arbeit.
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar"><span>BLOCK 1 / FOLIE 2</span><span>Grundstein Bau GmbH · Linz</span></div>
+</div>
+
+<!-- ===== F3: WAS IST CLAUDE ===== -->
+<div class="slide" id="slide2">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 1 · Grundlagen</div>
+      <div class="slide-title">Was ist Claude — und was ist er nicht?</div>
+    </div>
+    <div class="slide-meta">Folie 3 / 7</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2" style="flex:1; align-items:start;">
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div class="section-label">Was Claude nicht ist</div>
+        <div class="nicht-card crossed">
+          <div class="n-icon">🤖</div>
+          <div><div class="n-title">Kein Roboter</div><div class="n-desc">Claude führt keine körperlichen Aufgaben aus, steuert keine Maschinen und handelt nicht eigenständig in der Welt.</div></div>
+        </div>
+        <div class="nicht-card crossed">
+          <div class="n-icon">🔍</div>
+          <div><div class="n-title">Keine Suchmaschine</div><div class="n-desc">Claude sucht nicht einfach im Internet — er denkt, formuliert und erstellt. <em>Websuche ist direkt im Eingabefeld per Such-Icon verfügbar.</em></div></div>
+        </div>
+        <div class="nicht-card crossed">
+          <div class="n-icon">🪄</div>
+          <div><div class="n-title">Kein Zauberer</div><div class="n-desc">Claude macht Fehler, kennt nicht alles und braucht gute Aufgabenstellungen — genau wie ein menschlicher Kollege.</div></div>
+        </div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div class="section-label">Was Claude ist</div>
+        <div class="card card-accent">
+          <h3>🧠 Ein Sprachmodell</h3>
+          <p>Claude wurde mit riesigen Mengen an Texten trainiert und kann dadurch lesen, schreiben, zusammenfassen, übersetzen, erklären und strukturieren — in natürlicher Sprache.</p>
+        </div>
+        <div class="card card-accent">
+          <h3>✍️ Ein Schreib- und Denkassistent</h3>
+          <p>Claude ist besonders stark bei allem, was mit Texten zu tun hat: E-Mails, Protokolle, Angebote, Berichte, Checklisten, Formulare.</p>
+        </div>
+        <div class="highlight warn" style="font-size:12.5px;">
+          <strong>Wichtig:</strong> Websuche ist direkt im Eingabefeld über das Such-Icon verfügbar — kein Einrichten nötig. Ohne Websuche antwortet Claude aus seinem Trainingswissen (Trainingsstand Anfang 2025).
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar"><span>BLOCK 1 / FOLIE 3</span><span>Grundstein Bau GmbH · Linz</span></div>
+</div>
+
+<!-- ===== F4: CLAUDE VS GOOGLE ===== -->
+<div class="slide" id="slide3">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 1 · Vergleich</div>
+      <div class="slide-title">Claude vs. Google — zwei verschiedene Werkzeuge</div>
+    </div>
+    <div class="slide-meta">Folie 4 / 7</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2" style="flex:1; align-items:start;">
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <table class="simple">
+          <thead>
+            <tr>
+              <th>Aufgabe</th>
+              <th>Google</th>
+              <th>Claude</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Aktuelle Nachrichten</td>
+              <td class="yes">✓ Ideal</td>
+              <td class="part">○ Mit Websuche</td>
+            </tr>
+            <tr>
+              <td>Adresse / Öffnungszeiten</td>
+              <td class="yes">✓ Ideal</td>
+              <td class="no">✗ Nicht geeignet</td>
+            </tr>
+            <tr>
+              <td>E-Mail schreiben</td>
+              <td class="no">✗ Nicht geeignet</td>
+              <td class="yes">✓ Ideal</td>
+            </tr>
+            <tr>
+              <td>Protokoll erstellen</td>
+              <td class="no">✗ Nicht geeignet</td>
+              <td class="yes">✓ Ideal</td>
+            </tr>
+            <tr>
+              <td>Angebot formulieren</td>
+              <td class="no">✗ Nicht geeignet</td>
+              <td class="yes">✓ Ideal</td>
+            </tr>
+            <tr>
+              <td>Dokument zusammenfassen</td>
+              <td class="no">✗ Nicht geeignet</td>
+              <td class="yes">✓ Ideal</td>
+            </tr>
+            <tr>
+              <td>Checkliste erstellen</td>
+              <td class="no">✗ Nicht geeignet</td>
+              <td class="yes">✓ Ideal</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <div class="section-label">Praxisbeispiel: Baustellenprotokoll Linz-Urfahr</div>
+        <div class="card" style="background:#f9f7f4;">
+          <h3 style="color:#888;">❌ Google-Suche</h3>
+          <p style="font-size:12px; color:#666;">„Baustellenprotokoll Vorlage" → 47.000 Ergebnisse. Verschiedene Vorlagen, PDFs, Download-Seiten. Man muss selbst suchen, herunterladen, anpassen, ausfüllen.</p>
+        </div>
+        <div class="card card-accent">
+          <h3>✓ Claude</h3>
+          <p style="font-size:12px;">"Erstell ein Baustellenprotokoll für die Baustelle Linz-Urfahr, Bauleiter Maier, Besprechung vom 12.5., folgende Punkte wurden besprochen: …"<br><br>→ Claude liefert ein <strong>fertig ausgefülltes, strukturiertes Protokoll</strong> — sofort verwendbar.</p>
+        </div>
+        <div class="highlight" style="font-size:12.5px;">
+          <strong>Faustregel:</strong> Google findet. Claude erstellt.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar"><span>BLOCK 1 / FOLIE 4</span><span>Grundstein Bau GmbH · Linz</span></div>
+</div>
+
+<!-- ===== F5: CLAUDE VS CHATGPT ===== -->
+<div class="slide" id="slide4">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 1 · Vergleich</div>
+      <div class="slide-title">Claude vs. ChatGPT — was ist der Unterschied?</div>
+    </div>
+    <div class="slide-meta">Folie 5 / 7</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2" style="flex:1; align-items:start;">
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div class="section-label">Stärken von Claude</div>
+        <ul class="icon-list">
+          <li><span class="ico">✍️</span><div><strong>Schreibstil</strong> — Claude schreibt besonders natürlich und stilsicher auf Deutsch; ideal für Briefe, Angebote und formelle Kommunikation</div></li>
+          <li><span class="ico">📄</span><div><strong>Lange Dokumente</strong> — Claude kann sehr umfangreiche Texte verarbeiten und zusammenfassen (z. B. 50-seitige Verträge)</div></li>
+          <li><span class="ico">⚡</span><div><strong>Cowork</strong> — Mit der Claude Desktop App kann Claude eigenständig auf dem Computer arbeiten: Dateien verwalten, Berichte erstellen, Abläufe automatisieren (erfordert Installation und Einrichtung)</div></li>
+          <li><span class="ico">🔒</span><div><strong>Datenschutz</strong> — Pro-Plan: Training-Opt-out ist standardmäßig aktiv; im Free-Plan manuell in den Einstellungen aktivierbar</div></li>
+        </ul>
+        <div class="highlight success" style="font-size:12px;">
+          <strong>Für den Büroalltag</strong> bei Grundstein Bau GmbH ist Claude die bessere Wahl: stärker im deutschen Schreiben, besser für Dokumente und Projektarbeit.
+        </div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div class="section-label">Wo ChatGPT vorne liegt</div>
+        <ul class="icon-list">
+          <li><span class="ico">🖼</span><div><strong>Bildgenerierung</strong> — ChatGPT (Plus) kann Bilder erstellen (DALL·E); Claude kann das nicht</div></li>
+          <li><span class="ico">📊</span><div><strong>Microsoft 365-Integration</strong> — ChatGPT ist tiefer in Word, Excel und Outlook eingebunden (Copilot)</div></li>
+        </ul>
+        <div class="section-label" style="margin-top:6px;">Datenschutz — beide US-Anbieter</div>
+        <div class="card" style="background:#f9f7f4; border-left: 4px solid var(--warn);">
+          <p style="font-size:12.5px; color:var(--text-mid); line-height:1.55;">
+            Sowohl Claude (Anthropic) als auch ChatGPT (OpenAI) sind <strong>US-amerikanische Unternehmen</strong>. Die Server stehen in den USA. Das bedeutet:
+          </p>
+          <ul style="margin-top:8px; padding-left:16px; font-size:12px; color:var(--text-mid); line-height:1.7;">
+            <li>Keine echten Kundendaten eingeben</li>
+            <li>Keine Personalakten oder Gehaltsdaten</li>
+            <li>Keine vertraulichen Vertragsdetails</li>
+            <li>Im Zweifel: IT-Abteilung fragen</li>
+          </ul>
+        </div>
+        <div class="highlight" style="font-size:12px;">
+          <strong>Hinweis:</strong> Bei Team- und Enterprise-Plänen gelten zusätzliche Datenschutzvereinbarungen — für Unternehmen empfehlenswert.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar"><span>BLOCK 1 / FOLIE 5</span><span>Grundstein Bau GmbH · Linz</span></div>
+</div>
+
+<!-- ===== F6: CLAUDE PRO ===== -->
+<div class="slide" id="slide5">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 1 · Claude Pro</div>
+      <div class="slide-title">Was Claude Pro kann — der Überblick</div>
+    </div>
+    <div class="slide-meta">Folie 6 / 7</div>
+  </div>
+  <div class="slide-body" style="gap:10px;">
+    <div class="cols-2" style="align-items:start; gap:14px; flex:1;">
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <div class="section-label">Was der Pro-Plan freischaltet</div>
+        <div class="pro-item">
+          <div class="p-icon">📁</div>
+          <div><div class="p-title">Projekte mit dauerhaftem Gedächtnis</div><div class="p-desc">Briefkopf, Ton, Vorlagen — Claude kennt Ihr Unternehmen und fängt nie wieder bei null an.</div></div>
+        </div>
+        <div class="pro-item">
+          <div class="p-icon">⚡</div>
+          <div><div class="p-title">Cowork — Claude auf Ihrem Computer</div><div class="p-desc">Dateien direkt erstellen und speichern, ganze Ordner bearbeiten, Seriendokumente auf Knopfdruck.</div></div>
+        </div>
+        <div class="pro-item">
+          <div class="p-icon">🔗</div>
+          <div><div class="p-title">Konnektoren (Mail, Kalender, Drive)</div><div class="p-desc">Claude liest Ihre E-Mails, trägt Termine ein, greift auf Drive-Dateien zu — kein Kopieren mehr.</div></div>
+        </div>
+        <div class="pro-item">
+          <div class="p-icon">🔒</div>
+          <div><div class="p-title">Datenschutz — kein Training mit Ihren Daten</div><div class="p-desc">Im Pro-Plan ist das standardmäßig aktiv. Im Free-Plan muss man es manuell einschalten.</div></div>
+        </div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div class="section-label">Lohnt sich das?</div>
+        <div class="card card-accent" style="background:var(--accent-light);">
+          <h3>Einfache Rechnung</h3>
+          <p style="font-size:12.5px; line-height:1.7;">
+            Pro-Plan: <strong>ca. 20 €/Monat</strong><br>
+            Wenn Claude täglich <strong>30 Minuten</strong> Arbeit abnimmt:<br>
+            → 10 Stunden/Monat gespart<br>
+            → Selbst bei 15 €/h = <strong>150 € Zeitwert</strong><br><br>
+            Realistisch sind es eher mehr — E-Mails, Protokolle, Dokumente, die früher eine halbe Stunde dauerten, gehen in 3 Minuten.
+          </p>
+        </div>
+        <div class="highlight success" style="font-size:12px;">
+          <strong>Teams-Plan:</strong> Ab 5 Personen gibt es einen Unternehmensplan mit zentraler Verwaltung und höheren Datenschutz-Garantien — sinnvoll für ganze Abteilungen.
+        </div>
+        <div style="background:var(--header-dark); border-radius:6px; padding:10px 14px; text-align:center;">
+          <div style="color:var(--accent-mid); font-size:10px; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:4px;">Empfehlung für den Büroalltag</div>
+          <div style="font-family:'DM Serif Display',serif; font-size:17px; color:white;">Starten Sie kostenlos — upgraden Sie, sobald Sie merken, dass Sie täglich damit arbeiten.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar"><span>BLOCK 1 / FOLIE 6</span><span>Grundstein Bau GmbH · Linz</span></div>
+</div>
+
+<!-- ===== F7: WAS CLAUDE NICHT KANN ===== -->
+<div class="slide" id="slide6">
+  <div class="slide-header">
+    <div>
+      <div class="block-label">Block 1 · Grenzen</div>
+      <div class="slide-title">Was Claude nicht kann — und die goldene Regel</div>
+    </div>
+    <div class="slide-meta">Folie 7 / 7</div>
+  </div>
+  <div class="slide-body" style="gap:12px;">
+    <div class="cols-2" style="align-items:start;">
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <div class="section-label">Grenzen kennen — Fehler vermeiden</div>
+        <ul class="icon-list">
+          <li><span class="ico">⏰</span><div><strong>Keine aktuellen Infos ohne Websuche</strong> — Ohne Websuche kennt Claude nur Informationen bis zu seinem Trainingsstand (Anfang 2025). Aktuelle Preise, Gesetze oder Nachrichten: Websuche aktivieren oder immer prüfen.</div></li>
+          <li><span class="ico">🚫</span><div><strong>Nicht in interne Systeme einpflegen</strong> — Claude kann keine Daten direkt in ERP, Buchhaltungssoftware oder interne Datenbanken schreiben (außer über spezielle Konnektoren).</div></li>
+          <li><span class="ico">👨‍⚖️</span><div><strong>Kein Ersatz für Fachleute</strong> — Rechtliche, steuerliche oder medizinische Fragen: Claude gibt Orientierung, aber kein Fachanwalt- oder Steuerberater-Ersatz.</div></li>
+          <li><span class="ico">🔒</span><div><strong>Keine sensiblen Kundendaten eingeben</strong> — Keine Namen mit Adresse + Auftragsdaten, keine Personalakten, keine Bankdaten. Im Zweifel anonymisieren.</div></li>
+        </ul>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div class="section-label">Und trotzdem macht er vieles richtig</div>
+        <div class="card card-accent">
+          <h3>Was Claude sehr gut kann</h3>
+          <p style="font-size:12px; line-height:1.6;">Schreiben · Zusammenfassen · Strukturieren · Übersetzen · Formulieren · Checklisten erstellen · Dokumente analysieren · Ideen entwickeln · Entwürfe liefern · Fragen beantworten</p>
+        </div>
+        <div class="highlight warn" style="font-size:12.5px;">
+          <strong>Immer prüfen:</strong> Claude kann Fehler machen — besonders bei Zahlen, Namen und spezifischen Fakten. Wichtige Inhalte immer gegenlesen, bevor sie rausgehen.
+        </div>
+      </div>
+    </div>
+    <div class="golden-box">
+      <div class="g-icon">🧑‍💼</div>
+      <div class="g-text">
+        <div class="g-label">Goldene Regel</div>
+        <div class="g-regel">„Kluger neuer Kollege im ersten Monat."</div>
+        <div class="g-sub">Sehr fähig, sehr hilfsbereit — aber er kennt das Unternehmen noch nicht in- und auswendig, macht manchmal Fehler und braucht klare Aufgaben. Je besser man ihm erklärt, was man braucht, desto besser wird das Ergebnis.</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"></div>
+  <div class="slide-footer-bar"><span>BLOCK 1 / FOLIE 7</span><span>Grundstein Bau GmbH · Linz</span></div>
+</div>
+
+<script>
+const total = 7;
+function goTo(n) {
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('slide' + n).classList.add('active');
+  document.getElementById('btn' + n).classList.add('active');
+}
+window.addEventListener('message', function(e) {
+  const active = document.querySelector('.slide.active');
+  const idx = active ? parseInt(active.id.replace('slide','')) : 0;
+  if (e.data === 'next' || e.data?.type === 'next') {
+    if (idx < total - 1) { goTo(idx + 1); }
+    else { window.parent.postMessage('blockEnd', '*'); }
+  } else if (e.data === 'prev' || e.data?.type === 'prev') {
+    if (idx > 0) { goTo(idx - 1); }
+    else { window.parent.postMessage('blockStart', '*'); }
+  }
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowRight' || e.key === ' ') {
+    e.preventDefault();
+    const active = document.querySelector('.slide.active');
+    const idx = active ? parseInt(active.id.replace('slide','')) : 0;
+    if (idx < total - 1) goTo(idx + 1);
+    else window.parent.postMessage('blockEnd', '*');
+  } else if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    const active = document.querySelector('.slide.active');
+    const idx = active ? parseInt(active.id.replace('slide','')) : 0;
+    if (idx > 0) goTo(idx - 1);
+    else window.parent.postMessage('blockStart', '*');
+  }
+});
+</script>
+</body>
+</html>
