@@ -21,6 +21,12 @@
     --success-bg: #edf7f2;
     --warn: #b5621a;
     --warn-bg: #fff7ef;
+    --n8n: #e65c00;
+    --n8n-bg: #fff4ee;
+    --cowork: #4a6fa5;
+    --cowork-bg: #e8eef7;
+    --pro-gold: #b8860b;
+    --pro-bg: #fffbea;
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   body { font-family:'DM Sans',sans-serif; background:#3a3a3a; display:flex; flex-direction:column; align-items:center; padding:20px; gap:16px; min-height:100vh; }
@@ -28,6 +34,8 @@
   .nav button { background:#555; color:#fff; border:none; padding:4px 9px; border-radius:4px; font-family:'DM Sans',sans-serif; font-size:10.5px; cursor:pointer; transition:background 0.2s; white-space:nowrap; }
   .nav button:hover { background:var(--accent); }
   .nav button.active { background:var(--accent); }
+  .nav button.n8n-btn { background:#7a3a10; }
+  .nav button.n8n-btn:hover, .nav button.n8n-btn.active { background:var(--n8n); }
 
   .slide { width:960px; max-width:100%; background:var(--cream); border-radius:4px; overflow:hidden; box-shadow:0 8px 40px rgba(0,0,0,0.45); display:none; flex-direction:column; min-height:540px; }
   .slide.active { display:flex; }
@@ -39,6 +47,7 @@
 
   .slide-body { flex:1; padding:24px 36px 18px; display:flex; flex-direction:column; gap:14px; }
   .slide-footer { height:5px; background:var(--accent); }
+  .slide-footer.n8n-footer { background:var(--n8n); }
   .slide-footer-bar { height:26px; background:#f0ece4; border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; padding:0 36px; }
   .slide-footer-bar span { font-size:10px; color:var(--text-light); letter-spacing:0.06em; }
 
@@ -47,29 +56,36 @@
 
   .card { background:var(--white); border:1px solid var(--border); border-radius:6px; padding:14px 16px; }
   .card-accent { border-left:4px solid var(--accent); }
+  .card-n8n { border-left:4px solid var(--n8n); }
   .card h3 { font-size:12px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:7px; }
+  .card-n8n h3 { color:var(--n8n); }
   .card p { font-size:13px; color:var(--text-mid); line-height:1.55; }
 
   .highlight { background:var(--accent-light); border-left:4px solid var(--accent); border-radius:4px; padding:10px 14px; font-size:13px; color:var(--text-dark); line-height:1.55; }
   .highlight.warn { background:var(--warn-bg); border-left-color:var(--warn); color:#6b3a10; }
   .highlight.success { background:var(--success-bg); border-left-color:var(--success); color:#1f4d35; }
+  .highlight.n8n { background:var(--n8n-bg); border-left-color:var(--n8n); color:#7a2e00; }
+  .highlight.pro { background:var(--pro-bg); border-left-color:var(--pro-gold); color:#6b4e00; }
 
   .icon-list { list-style:none; display:flex; flex-direction:column; gap:7px; }
   .icon-list li { display:flex; align-items:flex-start; gap:9px; font-size:13px; color:var(--text-mid); line-height:1.4; }
   .icon-list li .ico { flex-shrink:0; width:20px; height:20px; border-radius:50%; background:var(--accent-light); display:flex; align-items:center; justify-content:center; font-size:11px; margin-top:1px; }
+  .icon-list li .ico.n8n-ico { background:var(--n8n-bg); }
   .icon-list li strong { color:var(--text-dark); }
 
   .step-list { list-style:none; display:flex; flex-direction:column; gap:8px; }
   .step-list li { display:flex; align-items:flex-start; gap:10px; font-size:13px; color:var(--text-mid); line-height:1.4; }
   .step-num { flex-shrink:0; width:22px; height:22px; border-radius:50%; background:var(--accent); color:white; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+  .step-num.n8n { background:var(--n8n); }
   .step-label { flex-shrink:0; min-width:22px; height:22px; border-radius:4px; background:var(--accent); color:white; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center; padding:0 5px; }
 
   .section-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--accent); border-bottom:2px solid var(--accent-light); padding-bottom:3px; margin-bottom:4px; }
+  .section-label.n8n { color:var(--n8n); border-bottom-color:var(--n8n-bg); }
 
   .title-body { flex:1; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:14px; padding:32px 48px; text-align:center; }
   .block-badge { background:var(--accent); color:white; font-size:12px; font-weight:600; padding:5px 16px; border-radius:20px; letter-spacing:0.06em; text-transform:uppercase; }
   .title-body h1 { font-family:'DM Serif Display',serif; font-size:36px; color:var(--text-dark); line-height:1.2; }
-  .title-body .sub { font-size:14px; color:var(--text-mid); max-width:560px; line-height:1.55; }
+  .title-body .sub { font-size:14px; color:var(--text-mid); max-width:580px; line-height:1.55; }
   .time-pill { display:inline-flex; align-items:center; gap:6px; background:#f0ece4; border:1px solid var(--border); padding:5px 14px; border-radius:20px; font-size:12px; color:var(--text-mid); }
 
   .prompt-box { background:#1e1e1e; border-radius:6px; padding:12px 15px; font-size:12px; color:#d4e0f0; line-height:1.6; font-family:monospace; }
@@ -91,9 +107,29 @@
   /* AF GRID für Übersicht */
   .af-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; }
   .af-item { background:var(--white); border:1px solid var(--border); border-radius:8px; padding:12px 10px; text-align:center; }
+  .af-item.n8n-item { background:var(--n8n-bg); border-color:#f0b090; }
   .af-item .af-icon { font-size:22px; display:block; margin-bottom:5px; }
   .af-item .af-num { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--accent); margin-bottom:3px; }
+  .af-item.n8n-item .af-num { color:var(--n8n); }
   .af-item .af-name { font-size:12px; font-weight:600; color:var(--text-dark); line-height:1.3; }
+
+  /* N8N WORKFLOW DIAGRAM */
+  .workflow-diagram { display:flex; align-items:center; gap:0; background:white; border:1px solid var(--border); border-radius:8px; padding:16px 20px; overflow-x:auto; }
+  .wf-step { display:flex; flex-direction:column; align-items:center; gap:5px; min-width:90px; }
+  .wf-box { background:var(--n8n-bg); border:2px solid var(--n8n); border-radius:8px; padding:8px 10px; text-align:center; width:88px; }
+  .wf-box.wf-trigger { background:#fff0e6; border-color:#cc4400; }
+  .wf-box.wf-claude { background:var(--accent-light); border-color:var(--accent); }
+  .wf-box.wf-output { background:var(--success-bg); border-color:var(--success); }
+  .wf-box .wf-icon { font-size:18px; }
+  .wf-box .wf-label { font-size:10px; font-weight:700; color:var(--text-dark); margin-top:3px; line-height:1.3; }
+  .wf-box .wf-sub { font-size:9px; color:var(--text-light); margin-top:2px; line-height:1.2; }
+  .wf-arrow { font-size:18px; color:var(--n8n); padding:0 4px; flex-shrink:0; margin-top:-10px; }
+
+  .cowork-badge { display:inline-flex; align-items:center; gap:5px; background:var(--cowork-bg); border:1px solid var(--accent-mid); border-radius:12px; padding:3px 10px; font-size:11px; font-weight:600; color:var(--accent); }
+  .pro-badge { display:inline-flex; align-items:center; gap:5px; background:var(--pro-bg); border:1px solid var(--pro-gold); border-radius:12px; padding:3px 10px; font-size:11px; font-weight:600; color:var(--pro-gold); }
+  .n8n-badge { display:inline-flex; align-items:center; gap:5px; background:var(--n8n-bg); border:1px solid var(--n8n); border-radius:12px; padding:3px 10px; font-size:11px; font-weight:600; color:var(--n8n); }
+
+  .badge-row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
 </style>
 </head>
 <body>
@@ -103,31 +139,40 @@
   <button onclick="goTo(1)" id="btn1">② Übersicht</button>
   <button onclick="goTo(2)" id="btn2">③ E-Mails</button>
   <button onclick="goTo(3)" id="btn3">④ E-Mails Praxis</button>
-  <button onclick="goTo(4)" id="btn4">⑤ Protokolle &amp; ToDos</button>
+  <button onclick="goTo(4)" id="btn4">⑤ Protokolle</button>
   <button onclick="goTo(5)" id="btn5">⑥ Zusammenfassen</button>
   <button onclick="goTo(6)" id="btn6">⑦ Schwierige Briefe</button>
   <button onclick="goTo(7)" id="btn7">⑧ Dinge merken</button>
-  <button onclick="goTo(8)" id="btn8">⑨ Tabellen &amp; Listen</button>
-  <button onclick="goTo(9)" id="btn9">⑩ Übersetzungen</button>
-  <button onclick="goTo(10)" id="btn10">⑪ Dok. ausarbeiten</button>
-  <button onclick="goTo(11)" id="btn11">⑫ Formulare (Sehtest)</button>
-  <button onclick="goTo(12)" id="btn12">⑬ Word + PDF-Export</button>
+  <button onclick="goTo(8)" id="btn8">⑨ Tabellen</button>
+  <button onclick="goTo(9)" id="btn9">⑩ Formulare</button>
+  <button onclick="goTo(10)" id="btn10">⑪ Word + PDF</button>
+  <button onclick="goTo(11)" id="btn11 n8n-btn" class="n8n-btn">⚙ n8n Übersicht</button>
+  <button onclick="goTo(12)" id="btn12" class="n8n-btn">⚙ Transkript → Zusammenfassung</button>
+  <button onclick="goTo(13)" id="btn13" class="n8n-btn">⚙ E-Mail → Aufgabe</button>
+  <button onclick="goTo(14)" id="btn14" class="n8n-btn">⚙ Formular → Word</button>
+  <button onclick="goTo(15)" id="btn15" class="n8n-btn">⚙ Rechnung → Tabelle</button>
 </div>
 
-<!-- FOLIE 1 -->
+<!-- FOLIE 1 — Titel -->
 <div class="slide active" id="slide0">
   <div class="slide-header">
     <div>
-      <div class="block-label">Block 6 · 10 Anwendungsfälle</div>
+      <div class="block-label">Block 6 · 10 Anwendungsfälle + Automatisierung</div>
       <div class="slide-title">10 Anwendungsfälle fürs Büro</div>
     </div>
-    <div class="slide-meta">Folie 1 / 13</div>
+    <div class="slide-meta">Folie 1 / 16</div>
   </div>
   <div class="title-body">
     <div class="block-badge">Block 6</div>
     <h1>10 Anwendungsfälle fürs Büro</h1>
-    <p class="sub">Von der ersten E-Mail bis zum fertig exportierten PDF — Claude in echten Situationen aus dem Büroalltag der Grundstein Bau GmbH.</p>
+    <p class="sub">Von der ersten E-Mail bis zur vollautomatischen Zusammenfassung — Claude und Cowork im echten Büroalltag der Grundstein Bau GmbH.<br><br>
+    <strong>Plus:</strong> 4 n8n-Workflows, die Aufgaben automatisch erledigen — ohne dass jemand etwas anklickt.</p>
     <div class="time-pill">⏱ 45 Minuten</div>
+    <div class="badge-row" style="margin-top:4px; justify-content:center;">
+      <span class="cowork-badge">🖥 Cowork Desktop</span>
+      <span class="pro-badge">⭐ Pro-Plan</span>
+      <span class="n8n-badge">⚙ n8n-Automatisierung</span>
+    </div>
   </div>
   <div class="slide-footer"></div>
   <div class="slide-footer-bar">
@@ -140,10 +185,10 @@
 <div class="slide" id="slide1">
   <div class="slide-header">
     <div>
-      <div class="block-label">Block 6 · 10 Anwendungsfälle</div>
-      <div class="slide-title">Überblick — 10 Anwendungsfälle</div>
+      <div class="block-label">Block 6 · Überblick</div>
+      <div class="slide-title">Überblick — 10 Anwendungsfälle + Automatisierung</div>
     </div>
-    <div class="slide-meta">Folie 2 / 13</div>
+    <div class="slide-meta">Folie 2 / 16</div>
   </div>
   <div class="slide-body">
     <div class="af-grid">
@@ -153,12 +198,15 @@
       <div class="af-item"><span class="af-icon">✉️</span><div class="af-num">Fall 4</div><div class="af-name">Schwierige Briefe &amp; Mahnungen</div></div>
       <div class="af-item"><span class="af-icon">📅</span><div class="af-num">Fall 5</div><div class="af-name">Dinge merken &amp; Termine organisieren</div></div>
       <div class="af-item"><span class="af-icon">📊</span><div class="af-num">Fall 6</div><div class="af-name">Tabellen &amp; Listen erstellen</div></div>
-      <div class="af-item"><span class="af-icon">🌍</span><div class="af-num">Fall 7</div><div class="af-name">Übersetzungen</div></div>
-      <div class="af-item"><span class="af-icon">🗂️</span><div class="af-num">Fall 8</div><div class="af-name">Dokumente vorbereiten &amp; ausarbeiten</div></div>
-      <div class="af-item"><span class="af-icon">📋</span><div class="af-num">Fall 9</div><div class="af-name">Formulare ausfüllen (z.B. Sehtest × 100)</div></div>
-      <div class="af-item"><span class="af-icon">🖨️</span><div class="af-num">Fall 10</div><div class="af-name">Word aktualisieren &amp; als PDF exportieren</div></div>
+      <div class="af-item"><span class="af-icon">📋</span><div class="af-num">Fall 7</div><div class="af-name">Formulare ausfüllen (AUVA × 100)</div></div>
+      <div class="af-item"><span class="af-icon">🖨️</span><div class="af-num">Fall 8–10</div><div class="af-name">Word aktualisieren &amp; als PDF exportieren</div></div>
+      <div class="af-item n8n-item" style="grid-column:span 2;">
+        <span class="af-icon">⚙️</span>
+        <div class="af-num">n8n Bonus</div>
+        <div class="af-name">4 vollautomatische Workflows — läuft von alleine</div>
+      </div>
     </div>
-    <div class="highlight">Aufbau jedes Falls: Kurze Erklärung → Beispiel-Prompt → Was Claude liefert → Tipp für die Praxis</div>
+    <div class="highlight pro">⭐ <strong>Cowork (Pro-Plan)</strong> macht den Unterschied: Dateizugriff, automatische Workflows, Ordner-Überwachung — das geht alles nur mit dem Desktop-Client.</div>
   </div>
   <div class="slide-footer"></div>
   <div class="slide-footer-bar">
@@ -174,7 +222,7 @@
       <div class="block-label">Block 6 · Fall 1</div>
       <div class="slide-title">📧 Fall 1: E-Mails schreiben &amp; umformulieren</div>
     </div>
-    <div class="slide-meta">Folie 3 / 13</div>
+    <div class="slide-meta">Folie 3 / 16</div>
   </div>
   <div class="slide-body">
     <div class="cols-2">
@@ -200,14 +248,15 @@
             <p style="font-size:12px;">Sehr geehrte Damen und Herren, wir benötigen bis Freitag, den 23. Mai, die Lieferung von 50 Kanthölzern … Mit freundlichen Grüßen</p>
           </div>
         </div>
+        <div class="highlight" style="margin-top:8px; font-size:12px;">🖥 <strong>Cowork-Tipp:</strong> E-Mail-Konnektor verbinden → Claude liest eingegangene Mails und schlägt Antworten vor — direkt im Postfach.</div>
       </div>
     </div>
-    <div class="highlight warn">Tipp: Immer Namen, Datum und konkrete Details — dann braucht man danach kaum noch etwas ändern.</div>
+    <div class="highlight warn">Tipp: Immer Namen, Datum und konkrete Details angeben — dann braucht man danach kaum noch etwas ändern.</div>
   </div>
   <div class="slide-footer"></div>
   <div class="slide-footer-bar">
     <span>GRUNDSTEIN BAU GMBH · LINZ</span>
-    <span>Block 6 · 10 Anwendungsfälle</span>
+    <span>Block 6 · Fall 1 — E-Mails</span>
   </div>
 </div>
 
@@ -218,7 +267,7 @@
       <div class="block-label">Block 6 · Fall 1</div>
       <div class="slide-title">📧 Fall 1 — drei Prompts live</div>
     </div>
-    <div class="slide-meta">Folie 4 / 13</div>
+    <div class="slide-meta">Folie 4 / 16</div>
   </div>
   <div class="slide-body">
     <ol class="step-list">
@@ -244,12 +293,13 @@
         </span>
       </li>
     </ol>
-    <div class="highlight">Nach dem ersten Ergebnis: "Kürzer bitte" oder "Formeller" oder "Füge eine Frist hinzu: bis 30. Mai"</div>
+    <div class="highlight">Nach dem ersten Ergebnis einfach nachfragen: "Kürzer bitte" oder "Formeller" oder "Füge eine Frist hinzu: bis 30. Mai"</div>
+    <div class="highlight pro">⭐ <strong>Pro-Plan + Cowork:</strong> Mit dem Gmail- oder Outlook-Konnektor kann Claude direkt in euren E-Mail-Ordnern suchen, lesen und Entwürfe anlegen — ohne Copy-Paste.</div>
   </div>
   <div class="slide-footer"></div>
   <div class="slide-footer-bar">
     <span>GRUNDSTEIN BAU GMBH · LINZ</span>
-    <span>Block 6 · 10 Anwendungsfälle</span>
+    <span>Block 6 · Fall 1 — E-Mails Praxis</span>
   </div>
 </div>
 
@@ -260,21 +310,21 @@
       <div class="block-label">Block 6 · Fall 2</div>
       <div class="slide-title">📝 Fall 2: Protokolle &amp; ToDos aus Besprechungen</div>
     </div>
-    <div class="slide-meta">Folie 5 / 13</div>
+    <div class="slide-meta">Folie 5 / 16</div>
   </div>
   <div class="slide-body">
     <div class="cols-2">
       <div>
-        <div class="section-label">3 Wege zu einem fertigen Protokoll</div>
+        <div class="section-label">3 Wege zum fertigen Protokoll</div>
         <ul class="icon-list" style="margin-top:8px;">
-          <li><span class="ico">✏️</span><span><strong>Stichpunkte:</strong> kurze Notizen während der Besprechung → Claude formuliert fertig</span></li>
-          <li><span class="ico">📷</span><span><strong>Foto:</strong> handschriftliche Notizen abfotografieren und hochladen</span></li>
-          <li><span class="ico">🎙️</span><span><strong>Aufnahme (Pocket/Plaud):</strong> Transkript einfügen → Protokoll + ToDos in Sekunden</span></li>
+          <li><span class="ico">✏️</span><span><strong>Stichpunkte:</strong> kurze Notizen → Claude formuliert fertig</span></li>
+          <li><span class="ico">📷</span><span><strong>Foto:</strong> handschriftliche Notizen abfotografieren, hochladen</span></li>
+          <li><span class="ico">🎙️</span><span><strong>Transkript (Pocket/Plaud):</strong> einfügen → Protokoll + ToDos in Sekunden</span></li>
         </ul>
         <div class="highlight success" style="margin-top:10px;">Was früher 20 Minuten dauerte, geht jetzt in 2 Minuten.</div>
       </div>
       <div>
-        <div class="section-label">Beispiel-Prompt mit Aufnahme</div>
+        <div class="section-label">Beispiel-Prompt mit Transkript</div>
         <div class="prompt-box" style="margin-top:8px;font-size:11px;">
           "Hier ist das Transkript unserer Baubesprechung vom 15.5.:<br>
           [Transkript einfügen]<br><br>
@@ -282,14 +332,14 @@
           1. Ein formelles Protokoll mit Datum, Teilnehmern, Beschlüssen<br>
           2. Eine klare To-do-Liste: Wer macht was bis wann?"
         </div>
-        <div class="highlight warn" style="margin-top:8px;font-size:12px;">Pocket / Plaud liefert automatisch ein Transkript — einfach kopieren und einfügen.</div>
+        <div class="highlight n8n" style="margin-top:8px;font-size:12px;">⚙ <strong>Noch automatischer:</strong> Transkript in Ordner legen → n8n erkennt die neue Datei → Claude erstellt automatisch Protokoll + schickt es per Mail. Kein Klick nötig! (→ Folie 12)</div>
       </div>
     </div>
   </div>
   <div class="slide-footer"></div>
   <div class="slide-footer-bar">
     <span>GRUNDSTEIN BAU GMBH · LINZ</span>
-    <span>Block 6 · 10 Anwendungsfälle</span>
+    <span>Block 6 · Fall 2 — Protokolle</span>
   </div>
 </div>
 
@@ -300,7 +350,7 @@
       <div class="block-label">Block 6 · Fall 3</div>
       <div class="slide-title">📄 Fall 3: Lange Dokumente zusammenfassen</div>
     </div>
-    <div class="slide-meta">Folie 6 / 13</div>
+    <div class="slide-meta">Folie 6 / 16</div>
   </div>
   <div class="slide-body">
     <div class="cols-2">
@@ -313,22 +363,23 @@
           <li><span class="ico">📧</span><span>Lange E-Mail-Verläufe</span></li>
           <li><span class="ico">📋</span><span>Normen und Vorschriften</span></li>
         </ul>
+        <div class="highlight pro" style="margin-top:10px;">⭐ <strong>Cowork-Vorteil:</strong> Ganze Ordner freigeben → Claude liest alle Dateien darin, ohne dass man jede einzeln hochladen muss.</div>
       </div>
       <div>
-        <div class="section-label">3-Schritte-Workflow</div>
+        <div class="section-label">3-Schritte-Workflow mit Cowork</div>
         <ol class="step-list" style="margin-top:8px;">
-          <li><span class="step-num">1</span><span><strong>Hochladen:</strong> Datei in den Chat ziehen (PDF, Word, Text)</span></li>
-          <li><span class="step-num">2</span><span><strong>Ziel angeben:</strong> "Fass zusammen, was für uns als Auftragnehmer wichtig ist"</span></li>
-          <li><span class="step-num">3</span><span><strong>Ergebnis verwenden:</strong> Zusammenfassung kopieren, weiterleiten oder als Basis für Antwort nutzen</span></li>
+          <li><span class="step-num">1</span><span><strong>Ordner freigeben:</strong> In Cowork Ordner verbinden (z.B. "Verträge 2025")</span></li>
+          <li><span class="step-num">2</span><span><strong>Ziel angeben:</strong> "Fass alle Verträge in diesem Ordner zusammen — was sind die wichtigsten Fristen?"</span></li>
+          <li><span class="step-num">3</span><span><strong>Ergebnis verwenden:</strong> Zusammenfassung als Word-Datei speichern, weiterleiten oder als Basis für Antwort nutzen</span></li>
         </ol>
       </div>
     </div>
-    <div class="highlight warn">Wichtig: Bei wichtigen Verträgen trotzdem die Originalstellen nachprüfen.</div>
+    <div class="highlight warn">Wichtig: Bei wichtigen Verträgen trotzdem die Originalstellen nachprüfen — Claude fasst zusammen, ersetzt aber keine Rechtsberatung.</div>
   </div>
   <div class="slide-footer"></div>
   <div class="slide-footer-bar">
     <span>GRUNDSTEIN BAU GMBH · LINZ</span>
-    <span>Block 6 · 10 Anwendungsfälle</span>
+    <span>Block 6 · Fall 3 — Zusammenfassen</span>
   </div>
 </div>
 
@@ -339,17 +390,17 @@
       <div class="block-label">Block 6 · Fall 4</div>
       <div class="slide-title">✉️ Fall 4: Reklamationen, Mahnungen, Absagen</div>
     </div>
-    <div class="slide-meta">Folie 7 / 13</div>
+    <div class="slide-meta">Folie 7 / 16</div>
   </div>
   <div class="slide-body">
     <div class="cols-3">
       <div class="card card-accent">
         <h3>Mahnung</h3>
-        <p>Den richtigen Ton treffen: bestimmt genug, aber noch ohne Eskalation. Claude kennt die Abstufungen.</p>
+        <p>Den richtigen Ton treffen: bestimmt genug, aber noch ohne Eskalation. Claude kennt die Abstufungen — 1. Erinnerung, 2. Mahnung, letzte Mahnung.</p>
       </div>
       <div class="card card-accent">
         <h3>Reklamation</h3>
-        <p>Sachlich, professionell, mit klarer Forderung — ohne Emotion, aber mit Nachdruck.</p>
+        <p>Sachlich, professionell, mit klarer Forderung — ohne Emotion, aber mit Nachdruck. Fristen und Rechnungsnummern nicht vergessen.</p>
       </div>
       <div class="card card-accent">
         <h3>Absage</h3>
@@ -358,23 +409,23 @@
     </div>
     <div class="section-label">Beispiel-Prompt Mahnung</div>
     <div class="prompt-box" style="font-size:11.5px;">"Schreib eine zweite Mahnung für Firma Stahlbau Krenn KG, Rechnung Nr. 2025-112, € 4.800,–, 45 Tage überfällig. Erste Erinnerung wurde ignoriert. Ton: bestimmt, aber noch ohne rechtliche Schritte anzudrohen. Frist: 7 Tage."</div>
-    <div class="highlight success">Schwierige Briefe sind der häufigste Zeitfresser im Büro — Claude macht sie in Sekunden.</div>
+    <div class="highlight success">Schwierige Briefe sind der häufigste Zeitfresser im Büro — Claude macht sie in Sekunden. Als Word-Datei speichern → in Cowork direkt ins Briefpapier-Template einfügen.</div>
   </div>
   <div class="slide-footer"></div>
   <div class="slide-footer-bar">
     <span>GRUNDSTEIN BAU GMBH · LINZ</span>
-    <span>Block 6 · 10 Anwendungsfälle</span>
+    <span>Block 6 · Fall 4 — Schwierige Briefe</span>
   </div>
 </div>
 
-<!-- FOLIE 8 — Dinge merken & Einladungen -->
+<!-- FOLIE 8 — Dinge merken -->
 <div class="slide" id="slide7">
   <div class="slide-header">
     <div>
       <div class="block-label">Block 6 · Fall 5</div>
       <div class="slide-title">📅 Fall 5: Dinge merken &amp; Termine organisieren</div>
     </div>
-    <div class="slide-meta">Folie 8 / 13</div>
+    <div class="slide-meta">Folie 8 / 16</div>
   </div>
   <div class="slide-body">
     <div class="cols-2">
@@ -384,25 +435,25 @@
           <li><span class="ico">🧠</span><span><strong>Dinge merken:</strong> "Merk dir: Kranbestellung bis 20.5. — Huber zuständig" → jederzeit abrufbar</span></li>
           <li><span class="ico">📋</span><span><strong>Aufgabenlisten pflegen:</strong> neue ToDos ergänzen, erledigte abhaken lassen</span></li>
           <li><span class="ico">📅</span><span><strong>Einladungen formulieren:</strong> Meeting-Einladung mit vollständiger Agenda</span></li>
-          <li><span class="ico">🔄</span><span><strong>Terminerinnerungen &amp; Absagen</strong> professionell kommunizieren</span></li>
+          <li><span class="ico">🔄</span><span><strong>Kalender-Konnektor (Cowork):</strong> Termin direkt in Google Calendar oder Outlook anlegen lassen</span></li>
         </ul>
+        <div class="highlight pro" style="margin-top:10px;">⭐ <strong>Pro + Cowork:</strong> Mit Kalender-Konnektor sagt man einfach "Trag Baubesprechung Do. 10 Uhr ein" — und Claude macht es.</div>
       </div>
       <div>
-        <div class="section-label">Beispiele</div>
+        <div class="section-label">Beispiel</div>
         <div class="mock-chat" style="margin-top:8px;">
           <div class="mock-bubble user">Merk dir: Bauleiter Huber braucht bis 20.5. die Kranbestellung. Polier Krenn soll bis Freitag den Sicherheitsbericht abliefern.</div>
-          <div class="mock-bubble claude">Notiert! ✓ Huber: Kranbestellung bis 20.5. ✓ Krenn: Sicherheitsbericht bis Freitag. Soll ich daran erinnern?</div>
-          <div class="mock-bubble user">Schreib eine Einladung: Baubesprechung Do. 10 Uhr Raum 2, Huber, Maier, Krenn. Themen: Rohbau, Fenster, Abnahme.</div>
-          <div class="mock-bubble claude">Betreff: Einladung Baubesprechung — Do., 22.05., 10:00 Uhr, Raum 2 …</div>
+          <div class="mock-bubble claude">Notiert! ✓ Huber: Kranbestellung bis 20.5. ✓ Krenn: Sicherheitsbericht bis Freitag. Soll ich einen Kalender-Termin anlegen?</div>
+          <div class="mock-bubble user">Ja, und schick Huber noch eine kurze Erinnerungs-Mail.</div>
+          <div class="mock-bubble claude">Erledigt — Termin angelegt und Entwurf für Huber bereit. Bitte kurz bestätigen, dann sende ich die Mail.</div>
         </div>
       </div>
     </div>
-    <div class="highlight warn">Tipp: In Projekten (Block 4) bleibt Claude das gesamte Gespräch über "im Bild" — ideal für laufende Aufgabenlisten.</div>
   </div>
   <div class="slide-footer"></div>
   <div class="slide-footer-bar">
     <span>GRUNDSTEIN BAU GMBH · LINZ</span>
-    <span>Block 6 · 10 Anwendungsfälle</span>
+    <span>Block 6 · Fall 5 — Termine</span>
   </div>
 </div>
 
@@ -413,7 +464,7 @@
       <div class="block-label">Block 6 · Fall 6</div>
       <div class="slide-title">📊 Fall 6: Tabellen &amp; Listen erstellen</div>
     </div>
-    <div class="slide-meta">Folie 9 / 13</div>
+    <div class="slide-meta">Folie 9 / 16</div>
   </div>
   <div class="slide-body">
     <div class="cols-2">
@@ -432,114 +483,42 @@
         <div class="prompt-box" style="margin-top:8px;font-size:11.5px;">"Erstell eine Vergleichstabelle für 3 Dachziegel-Angebote. Spalten: Lieferant, Preis/Stück, Mindestmenge, Lieferzeit, Qualitätsklasse. Lieferanten: Wienerberger, Röben, Creaton."</div>
       </div>
     </div>
-    <div class="highlight">Tabelle kopieren → direkt in Excel einfügen. Oder Claude um eine Excel-Datei bitten (mit Cowork).</div>
+    <div class="ba-row" style="margin-top:4px;">
+      <div class="ba-col before">
+        <div class="ba-label">Ohne Cowork</div>
+        <p>Tabelle in Claude erstellen → kopieren → manuell in Excel einfügen und nachformatieren.</p>
+      </div>
+      <div class="ba-col after">
+        <div class="ba-label">Mit Cowork (Pro)</div>
+        <p>"Erstell die Tabelle und speicher sie als Excel-Datei in meinem Ordner Angebote 2025." → fertig, nichts kopieren.</p>
+      </div>
+    </div>
   </div>
   <div class="slide-footer"></div>
   <div class="slide-footer-bar">
     <span>GRUNDSTEIN BAU GMBH · LINZ</span>
-    <span>Block 6 · 10 Anwendungsfälle</span>
+    <span>Block 6 · Fall 6 — Tabellen</span>
   </div>
 </div>
 
-<!-- FOLIE 10 — Übersetzungen -->
+<!-- FOLIE 10 — Formulare ausfüllen -->
 <div class="slide" id="slide9">
   <div class="slide-header">
     <div>
       <div class="block-label">Block 6 · Fall 7</div>
-      <div class="slide-title">🌍 Fall 7: Übersetzungen</div>
+      <div class="slide-title">📋 Fall 7: Formulare ausfüllen — AUVA × 100</div>
     </div>
-    <div class="slide-meta">Folie 10 / 13</div>
-  </div>
-  <div class="slide-body">
-    <div class="cols-2">
-      <div>
-        <div class="section-label">Wann sinnvoll</div>
-        <ul class="icon-list" style="margin-top:8px;">
-          <li><span class="ico">🌍</span><span>E-Mails an internationale Lieferanten (Englisch, Tschechisch, Rumänisch...)</span></li>
-          <li><span class="ico">📄</span><span>Technische Dokumente oder Anleitungen übersetzen</span></li>
-          <li><span class="ico">📧</span><span>Eingegangene fremdsprachige E-Mails verstehen</span></li>
-          <li><span class="ico">⚖️</span><span>Vertragsklauseln aus Fremdsprache ins Deutsche</span></li>
-        </ul>
-      </div>
-      <div>
-        <div class="section-label">3 Beispiele</div>
-        <ol class="step-list" style="margin-top:8px;">
-          <li><span class="step-num">1</span><span><strong>Einfache Übersetzung:</strong> "Übersetze diese E-Mail ins Englische, professioneller Ton"</span></li>
-          <li><span class="step-num">2</span><span><strong>Mit Erklärung:</strong> "Übersetze und erkläre, was der Lieferant wirklich meint"</span></li>
-          <li><span class="step-num">3</span><span><strong>Fachbegriffe:</strong> "Übersetze diese Baufachbegriffe vom Englischen ins Deutsche mit Erklärung"</span></li>
-        </ol>
-      </div>
-    </div>
-    <div class="highlight warn">Vorteil gegenüber Google Translate: Claude übersetzt im richtigen Ton und Kontext — nicht wortgetreu, sondern sinngemäß.</div>
-  </div>
-  <div class="slide-footer"></div>
-  <div class="slide-footer-bar">
-    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
-    <span>Block 6 · 10 Anwendungsfälle</span>
-  </div>
-</div>
-
-<!-- FOLIE 11 — Dokumente vorbereiten & ausarbeiten -->
-<div class="slide" id="slide10">
-  <div class="slide-header">
-    <div>
-      <div class="block-label">Block 6 · Fall 8</div>
-      <div class="slide-title">🗂️ Fall 8: Dokumente vorbereiten &amp; ausarbeiten</div>
-    </div>
-    <div class="slide-meta">Folie 11 / 13</div>
-  </div>
-  <div class="slide-body">
-    <div class="cols-2">
-      <div>
-        <div class="section-label">Was Claude ausarbeiten kann</div>
-        <ul class="icon-list" style="margin-top:8px;">
-          <li><span class="ico">📄</span><span><strong>Angebote &amp; Auftragsbestätigungen:</strong> auf Basis von Stichpunkten fertig formulieren</span></li>
-          <li><span class="ico">📋</span><span><strong>Berichte &amp; Protokolle:</strong> Rohdaten strukturieren und ausformulieren</span></li>
-          <li><span class="ico">✉️</span><span><strong>Serienbriefe:</strong> Vorlage + Daten → viele Versionen auf einmal</span></li>
-          <li><span class="ico">📊</span><span><strong>Präsentationen vorbereiten:</strong> Inhalte gliedern, Kernaussagen herausarbeiten</span></li>
-        </ul>
-        <div class="highlight success" style="margin-top:10px;">Stichpunkte rein — fertiges Dokument raus.</div>
-      </div>
-      <div>
-        <div class="section-label">Beispiel-Prompt</div>
-        <div class="prompt-box" style="margin-top:8px;font-size:11px;">
-          "Ich brauche ein Angebot für Zimmerei Brandl GmbH.<br>
-          Leistung: Dachstuhlmontage, Baustelle Perg<br>
-          Umfang: ca. 120 m², inkl. Materiallieferung<br>
-          Zeitraum: Juni–Juli 2025<br>
-          Preis: € 38.000,– netto<br><br>
-          Formulier das als professionelles Angebotsschreiben,
-          mit Gültigkeitsfrist 30 Tage."
-        </div>
-      </div>
-    </div>
-    <div class="highlight warn">Tipp: Je mehr Details Sie angeben (Zahlen, Namen, Fristen), desto weniger müssen Sie nachher korrigieren.</div>
-  </div>
-  <div class="slide-footer"></div>
-  <div class="slide-footer-bar">
-    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
-    <span>Block 6 · 10 Anwendungsfälle</span>
-  </div>
-</div>
-
-<!-- FOLIE 12 — Formulare ausfüllen -->
-<div class="slide" id="slide11">
-  <div class="slide-header">
-    <div>
-      <div class="block-label">Block 6 · Fall 9</div>
-      <div class="slide-title">📋 Fall 9: Formulare ausfüllen &amp; Vorlagen befüllen</div>
-    </div>
-    <div class="slide-meta">Folie 12 / 13</div>
+    <div class="slide-meta">Folie 10 / 16</div>
   </div>
   <div class="slide-body">
     <div class="cols-2">
       <div>
         <div class="section-label">Praxisbeispiel: Sehtest-Formulare</div>
         <div class="card card-accent" style="margin-top:8px;">
-          <h3>Szenario</h3>
-          <p style="font-size:12.5px;">100 Mitarbeiter brauchen einen Sehtest — für jeden muss dasselbe Formular ausgefüllt werden. Statt 100× manuell: Claude befüllt alle Formulare auf einmal, wenn Sie die Mitarbeiterdaten liefern.</p>
+          <h3>Das Szenario</h3>
+          <p style="font-size:12.5px;">100 Mitarbeiter brauchen einen Sehtest — für jeden muss dasselbe Formular ausgefüllt werden. Statt 100× manuell ausfüllen: Claude befüllt alle Formulare auf einmal.</p>
         </div>
-        <div class="prompt-box" style="margin-top:8px;font-size:11px;">"Ich habe 100 Mitarbeiter. Für jeden brauche ich das Sehtest-Formular der AUVA befüllt. Hier ist die Mitarbeiterliste [Excel einfügen]. Erstell die Formulare für alle."</div>
+        <div class="prompt-box" style="margin-top:8px;font-size:11px;">"Ich habe 100 Mitarbeiter. Für jeden brauche ich das AUVA-Sehtest-Formular befüllt. Hier ist die Mitarbeiterliste [Excel hochladen in Cowork]. Erstell die Formulare für alle und speicher sie im Ordner 'Sehtest Mai 2025'."</div>
       </div>
       <div>
         <div class="section-label">Weitere typische Formulare</div>
@@ -549,71 +528,421 @@
           <li><span class="ico">📄</span><span>Auftragsbestätigungen, Lieferscheine, Rechnungen</span></li>
           <li><span class="ico">📊</span><span>Wochenberichte und Bautagebücher</span></li>
         </ul>
-        <div class="section-label" style="margin-top:12px;">Workflow</div>
+        <div class="section-label" style="margin-top:12px;">Workflow mit Cowork</div>
         <ol class="step-list" style="margin-top:6px;">
-          <li><span class="step-num">1</span><span>Vorlage hochladen oder Formular beschreiben</span></li>
-          <li><span class="step-num">2</span><span>"Befüll das Formular mit folgenden Daten…"</span></li>
-          <li><span class="step-num">3</span><span>Prüfen, anpassen, speichern oder drucken</span></li>
+          <li><span class="step-num">1</span><span>Vorlage + Mitarbeiterliste in Cowork hochladen</span></li>
+          <li><span class="step-num">2</span><span>"Befüll das Formular für jeden Mitarbeiter in der Liste"</span></li>
+          <li><span class="step-num">3</span><span>Claude erstellt alle Dateien → im Ordner fertig gespeichert</span></li>
         </ol>
       </div>
     </div>
+    <div class="highlight pro">⭐ Das funktioniert nur mit Cowork — der Dateizugriff auf Ordner und das automatische Speichern sind Pro-Funktionen.</div>
   </div>
   <div class="slide-footer"></div>
   <div class="slide-footer-bar">
     <span>GRUNDSTEIN BAU GMBH · LINZ</span>
-    <span>Block 6 · 10 Anwendungsfälle</span>
+    <span>Block 6 · Fall 7 — Formulare</span>
   </div>
 </div>
 
-<!-- FOLIE 13 — Word-Dokumente aktualisieren + PDF -->
-<div class="slide" id="slide12">
+<!-- FOLIE 11 — Word + PDF -->
+<div class="slide" id="slide10">
   <div class="slide-header">
     <div>
-      <div class="block-label">Block 6 · Fall 10</div>
-      <div class="slide-title">🖨️ Fall 10: Word-Dokumente aktualisieren &amp; als PDF exportieren</div>
+      <div class="block-label">Block 6 · Fall 8–10</div>
+      <div class="slide-title">🖨️ Fall 8–10: Word aktualisieren &amp; als PDF exportieren</div>
     </div>
-    <div class="slide-meta">Folie 13 / 13</div>
+    <div class="slide-meta">Folie 11 / 16</div>
   </div>
   <div class="slide-body">
     <div class="cols-2">
       <div>
-        <div class="section-label">Bestehende Dokumente nach Wünschen anpassen</div>
+        <div class="section-label">Was Claude in Cowork erledigt</div>
         <ul class="icon-list" style="margin-top:8px;">
           <li><span class="ico">📝</span><span><strong>Inhalt ändern:</strong> "Aktualisiere den Vertrag — ändere den Preis auf € 52.000,– und verlängere die Frist auf 30.09."</span></li>
-          <li><span class="ico">🎨</span><span><strong>Format vereinheitlichen:</strong> "Füge in alle Word-Dateien im Ordner unseren Briefkopf ein"</span></li>
+          <li><span class="ico">🎨</span><span><strong>Briefkopf einfügen:</strong> "Füge in alle Word-Dateien im Ordner unseren Briefkopf ein"</span></li>
           <li><span class="ico">📄</span><span><strong>Als PDF exportieren:</strong> "Wandle das Dokument in ein PDF um" — direkt aus Cowork</span></li>
           <li><span class="ico">📁</span><span><strong>Mehrere auf einmal:</strong> "Konvertiere alle Word-Dateien im Ordner 'Angebote Mai' in PDFs"</span></li>
         </ul>
       </div>
       <div>
-        <div class="section-label">Workflow: Angebot aktualisieren + als PDF versenden</div>
+        <div class="section-label">Workflow: Angebot → PDF → versenden</div>
         <ol class="step-list" style="margin-top:8px;">
-          <li><span class="step-num">1</span><span>Bestehendes Word-Dokument hochladen oder Ordner öffnen (Cowork)</span></li>
-          <li><span class="step-num">2</span><span>"Ändere folgende Punkte: [Liste der Änderungen]"</span></li>
+          <li><span class="step-num">1</span><span>Ordner "Angebote" in Cowork freigeben</span></li>
+          <li><span class="step-num">2</span><span>"Ändere folgende Punkte in Angebot_Brandl.docx: Preis auf € 41.000,–, Frist auf 15.07."</span></li>
           <li><span class="step-num">3</span><span>Claude speichert das aktualisierte Dokument</span></li>
-          <li><span class="step-num">4</span><span>"Exportiere als PDF" → fertig zum Versenden</span></li>
+          <li><span class="step-num">4</span><span>"Exportiere als PDF und erstell den E-Mail-Entwurf für Brandl"</span></li>
         </ol>
-        <div class="highlight warn" style="margin-top:8px;">Für Dateioperationen &amp; PDF-Export wird Cowork (Desktop App) benötigt.</div>
+        <div class="highlight warn" style="margin-top:8px;">Für Dateioperationen &amp; PDF-Export wird Cowork (Desktop App, Pro-Plan) benötigt.</div>
       </div>
     </div>
   </div>
   <div class="slide-footer"></div>
   <div class="slide-footer-bar">
     <span>GRUNDSTEIN BAU GMBH · LINZ</span>
-    <span>Block 6 · 10 Anwendungsfälle</span>
+    <span>Block 6 · Fall 8–10 — Word &amp; PDF</span>
+  </div>
+</div>
+
+<!-- FOLIE 12 — n8n Übersicht -->
+<div class="slide" id="slide11">
+  <div class="slide-header" style="background:#2a1a10;">
+    <div>
+      <div class="block-label" style="color:#f0a070;">Block 6 · Automatisierung mit n8n</div>
+      <div class="slide-title">⚙ Wenn Claude von alleine arbeitet — n8n-Workflows</div>
+    </div>
+    <div class="slide-meta">Folie 12 / 16</div>
+  </div>
+  <div class="slide-body">
+    <div class="cols-2">
+      <div>
+        <div class="section-label n8n">Was ist n8n?</div>
+        <div class="card card-n8n" style="margin-top:8px;">
+          <h3>Automatisierungs-Plattform</h3>
+          <p>n8n verbindet Programme miteinander und startet Claude automatisch — ohne dass jemand etwas anklickt. Wie ein unsichtbarer Mitarbeiter, der immer da ist.</p>
+        </div>
+        <div class="highlight n8n" style="margin-top:10px;">n8n + Claude + Cowork = Workflows, die komplett alleine laufen — auch wenn niemand im Büro ist.</div>
+      </div>
+      <div>
+        <div class="section-label n8n">4 Workflows für die Noch nicht fertig GmbH</div>
+        <ul class="icon-list" style="margin-top:8px;">
+          <li><span class="ico n8n-ico">🎙</span><span><strong>Transkript → Zusammenfassung:</strong> Datei ablegen → fertig</span></li>
+          <li><span class="ico n8n-ico">📧</span><span><strong>E-Mail → Aufgabe:</strong> Mail kommt rein → Aufgabe wird angelegt</span></li>
+          <li><span class="ico n8n-ico">📋</span><span><strong>Formular → Word-Dokument:</strong> Daten eingeben → Dokument fertig</span></li>
+          <li><span class="ico n8n-ico">🧾</span><span><strong>Rechnung → Tabelle:</strong> PDF einlesen → Excel-Eintrag</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="highlight pro">⭐ n8n-Automatisierungen mit Claude erfordern den Pro-Plan (API-Zugang). Mit Cowork und einem n8n-Konnektor lässt sich das direkt aus dem Workshop starten.</div>
+  </div>
+  <div class="slide-footer n8n-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 6 · n8n-Automatisierung</span>
+  </div>
+</div>
+
+<!-- FOLIE 13 — n8n Workflow 1: Transkript → Zusammenfassung -->
+<div class="slide" id="slide12">
+  <div class="slide-header" style="background:#2a1a10;">
+    <div>
+      <div class="block-label" style="color:#f0a070;">Block 6 · n8n Workflow 1</div>
+      <div class="slide-title">🎙 Transkript ablegen → Zusammenfassung kommt automatisch</div>
+    </div>
+    <div class="slide-meta">Folie 13 / 16</div>
+  </div>
+  <div class="slide-body">
+    <div class="workflow-diagram">
+      <div class="wf-step">
+        <div class="wf-box wf-trigger">
+          <div class="wf-icon">🎙</div>
+          <div class="wf-label">Transkript in Ordner</div>
+          <div class="wf-sub">Pocket / Plaud / Otter</div>
+        </div>
+      </div>
+      <div class="wf-arrow">→</div>
+      <div class="wf-step">
+        <div class="wf-box">
+          <div class="wf-icon">⚙</div>
+          <div class="wf-label">n8n erkennt neue Datei</div>
+          <div class="wf-sub">Ordner-Überwachung</div>
+        </div>
+      </div>
+      <div class="wf-arrow">→</div>
+      <div class="wf-step">
+        <div class="wf-box wf-claude">
+          <div class="wf-icon">🤖</div>
+          <div class="wf-label">Claude liest + fasst zusammen</div>
+          <div class="wf-sub">Protokoll + ToDos</div>
+        </div>
+      </div>
+      <div class="wf-arrow">→</div>
+      <div class="wf-step">
+        <div class="wf-box wf-output">
+          <div class="wf-icon">📄</div>
+          <div class="wf-label">Word-Datei gespeichert</div>
+          <div class="wf-sub">im Ordner "Protokolle"</div>
+        </div>
+      </div>
+      <div class="wf-arrow">→</div>
+      <div class="wf-step">
+        <div class="wf-box wf-output">
+          <div class="wf-icon">📧</div>
+          <div class="wf-label">Mail an Teilnehmer</div>
+          <div class="wf-sub">automatisch versendet</div>
+        </div>
+      </div>
+    </div>
+    <div class="cols-2">
+      <div>
+        <div class="section-label n8n">Was passiert im Detail</div>
+        <ol class="step-list" style="margin-top:8px;">
+          <li><span class="step-num n8n">1</span><span>Mitarbeiter legt Transkript-Datei in den Ordner "Besprechungen" (OneDrive/Google Drive)</span></li>
+          <li><span class="step-num n8n">2</span><span>n8n überwacht den Ordner — erkennt neue Datei innerhalb von Sekunden</span></li>
+          <li><span class="step-num n8n">3</span><span>Claude erhält den Text und erstellt strukturiertes Protokoll mit Beschlüssen und To-dos</span></li>
+          <li><span class="step-num n8n">4</span><span>Protokoll wird als Word-Datei gespeichert und an alle Teilnehmer gemailt</span></li>
+        </ol>
+      </div>
+      <div>
+        <div class="section-label n8n">Ergebnis</div>
+        <div class="card card-n8n" style="margin-top:8px;">
+          <h3>Aufwand: fast null</h3>
+          <p style="font-size:12.5px;">Aufnahme mit Pocket machen → Transkript exportieren → in Ordner ziehen → fertig. Das Protokoll liegt in 2 Minuten im Postfach aller Teilnehmer. <strong>Kein manueller Schritt dazwischen.</strong></p>
+        </div>
+        <div class="highlight n8n" style="margin-top:8px; font-size:12px;">Funktioniert mit: Pocket Note, Plaud, Otter.ai, Microsoft Teams-Transkript, Zoom-Aufnahme</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer n8n-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 6 · n8n Workflow 1 — Transkript</span>
+  </div>
+</div>
+
+<!-- FOLIE 14 — n8n Workflow 2: E-Mail → Aufgabe -->
+<div class="slide" id="slide13">
+  <div class="slide-header" style="background:#2a1a10;">
+    <div>
+      <div class="block-label" style="color:#f0a070;">Block 6 · n8n Workflow 2</div>
+      <div class="slide-title">📧 E-Mail kommt rein → Aufgabe wird automatisch angelegt</div>
+    </div>
+    <div class="slide-meta">Folie 14 / 16</div>
+  </div>
+  <div class="slide-body">
+    <div class="workflow-diagram">
+      <div class="wf-step">
+        <div class="wf-box wf-trigger">
+          <div class="wf-icon">📧</div>
+          <div class="wf-label">E-Mail eingeht</div>
+          <div class="wf-sub">Gmail / Outlook</div>
+        </div>
+      </div>
+      <div class="wf-arrow">→</div>
+      <div class="wf-step">
+        <div class="wf-box">
+          <div class="wf-icon">⚙</div>
+          <div class="wf-label">n8n liest die Mail</div>
+          <div class="wf-sub">E-Mail-Trigger</div>
+        </div>
+      </div>
+      <div class="wf-arrow">→</div>
+      <div class="wf-step">
+        <div class="wf-box wf-claude">
+          <div class="wf-icon">🤖</div>
+          <div class="wf-label">Claude analysiert Inhalt</div>
+          <div class="wf-sub">Aufgabe / Frist / Person</div>
+        </div>
+      </div>
+      <div class="wf-arrow">→</div>
+      <div class="wf-step">
+        <div class="wf-box wf-output">
+          <div class="wf-icon">✅</div>
+          <div class="wf-label">Aufgabe angelegt</div>
+          <div class="wf-sub">Trello / Asana / Liste</div>
+        </div>
+      </div>
+      <div class="wf-arrow">→</div>
+      <div class="wf-step">
+        <div class="wf-box wf-output">
+          <div class="wf-icon">💬</div>
+          <div class="wf-label">Bestätigung</div>
+          <div class="wf-sub">kurze Antwort-Mail</div>
+        </div>
+      </div>
+    </div>
+    <div class="cols-2">
+      <div>
+        <div class="section-label n8n">Beispiel-Szenario</div>
+        <div class="card card-n8n" style="margin-top:8px;">
+          <h3>Kundenanfrage trifft ein</h3>
+          <p style="font-size:12px;">Kunde schreibt: "Brauche ein Angebot für Dachsanierung bis Ende der Woche." → n8n erkennt die Anfrage → Claude extrahiert: Aufgabe "Angebot erstellen", Frist "Freitag", Zuständig "Vertrieb" → Aufgabe erscheint automatisch in der To-do-Liste.</p>
+        </div>
+      </div>
+      <div>
+        <div class="section-label n8n">Was Claude erkennt</div>
+        <ul class="icon-list" style="margin-top:8px;">
+          <li><span class="ico n8n-ico">📌</span><span><strong>Aufgabentyp:</strong> Angebot, Termin, Rückruf, Lieferung…</span></li>
+          <li><span class="ico n8n-ico">📅</span><span><strong>Fristen:</strong> "bis Freitag", "dringend", "ASAP"</span></li>
+          <li><span class="ico n8n-ico">👤</span><span><strong>Zuständige Person:</strong> aus Kontext oder Betreff</span></li>
+          <li><span class="ico n8n-ico">⚡</span><span><strong>Priorität:</strong> dringend vs. normal</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer n8n-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 6 · n8n Workflow 2 — E-Mail zu Aufgabe</span>
+  </div>
+</div>
+
+<!-- FOLIE 15 — n8n Workflow 3: Formular → Word -->
+<div class="slide" id="slide14">
+  <div class="slide-header" style="background:#2a1a10;">
+    <div>
+      <div class="block-label" style="color:#f0a070;">Block 6 · n8n Workflow 3</div>
+      <div class="slide-title">📋 Formular ausfüllen → Word-Dokument automatisch erstellen</div>
+    </div>
+    <div class="slide-meta">Folie 15 / 16</div>
+  </div>
+  <div class="slide-body">
+    <div class="workflow-diagram">
+      <div class="wf-step">
+        <div class="wf-box wf-trigger">
+          <div class="wf-icon">📋</div>
+          <div class="wf-label">Formular ausgefüllt</div>
+          <div class="wf-sub">Web-Formular / Excel</div>
+        </div>
+      </div>
+      <div class="wf-arrow">→</div>
+      <div class="wf-step">
+        <div class="wf-box">
+          <div class="wf-icon">⚙</div>
+          <div class="wf-label">n8n empfängt Daten</div>
+          <div class="wf-sub">Webhook / Tabelle</div>
+        </div>
+      </div>
+      <div class="wf-arrow">→</div>
+      <div class="wf-step">
+        <div class="wf-box wf-claude">
+          <div class="wf-icon">🤖</div>
+          <div class="wf-label">Claude befüllt Vorlage</div>
+          <div class="wf-sub">AUVA / ÖNORM / intern</div>
+        </div>
+      </div>
+      <div class="wf-arrow">→</div>
+      <div class="wf-step">
+        <div class="wf-box wf-output">
+          <div class="wf-icon">📄</div>
+          <div class="wf-label">Word-Dokument fertig</div>
+          <div class="wf-sub">im richtigen Ordner</div>
+        </div>
+      </div>
+      <div class="wf-arrow">→</div>
+      <div class="wf-step">
+        <div class="wf-box wf-output">
+          <div class="wf-icon">📧</div>
+          <div class="wf-label">PDF per Mail</div>
+          <div class="wf-sub">an Mitarbeiter / HR</div>
+        </div>
+      </div>
+    </div>
+    <div class="cols-2">
+      <div>
+        <div class="section-label n8n">Praxisbeispiel: Sehtest × 100</div>
+        <div class="card card-n8n" style="margin-top:8px;">
+          <h3>100 Formulare — 0 Handarbeit</h3>
+          <p style="font-size:12px;">HR-Mitarbeiterin trägt Mitarbeiterdaten in eine Excel-Liste ein → n8n startet automatisch → Claude befüllt das AUVA-Sehtest-Formular für jeden Mitarbeiter → 100 fertige Word-Dokumente landen im Ordner "Sehtest 2025" → jeder bekommt sein Formular per Mail.</p>
+        </div>
+      </div>
+      <div>
+        <div class="section-label n8n">Weitere Einsatzfälle</div>
+        <ul class="icon-list" style="margin-top:8px;">
+          <li><span class="ico n8n-ico">🦺</span><span>AUVA-Unfallanzeigen automatisch ausfüllen</span></li>
+          <li><span class="ico n8n-ico">📑</span><span>Abnahmeprotokolle nach ÖNORM generieren</span></li>
+          <li><span class="ico n8n-ico">📄</span><span>Auftragsbestätigungen aus Angeboten erstellen</span></li>
+          <li><span class="ico n8n-ico">📊</span><span>Wochenberichte aus Bautagebuch-Einträgen</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer n8n-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 6 · n8n Workflow 3 — Formular zu Word</span>
+  </div>
+</div>
+
+<!-- FOLIE 16 — n8n Workflow 4: Rechnung → Tabelle -->
+<div class="slide" id="slide15">
+  <div class="slide-header" style="background:#2a1a10;">
+    <div>
+      <div class="block-label" style="color:#f0a070;">Block 6 · n8n Workflow 4</div>
+      <div class="slide-title">🧾 PDF-Rechnung eingeht → Daten automatisch in Excel-Tabelle</div>
+    </div>
+    <div class="slide-meta">Folie 16 / 16</div>
+  </div>
+  <div class="slide-body">
+    <div class="workflow-diagram">
+      <div class="wf-step">
+        <div class="wf-box wf-trigger">
+          <div class="wf-icon">🧾</div>
+          <div class="wf-label">Rechnung als PDF</div>
+          <div class="wf-sub">per Mail / Ordner</div>
+        </div>
+      </div>
+      <div class="wf-arrow">→</div>
+      <div class="wf-step">
+        <div class="wf-box">
+          <div class="wf-icon">⚙</div>
+          <div class="wf-label">n8n erkennt neue Rechnung</div>
+          <div class="wf-sub">Mail-Anhang / Ordner</div>
+        </div>
+      </div>
+      <div class="wf-arrow">→</div>
+      <div class="wf-step">
+        <div class="wf-box wf-claude">
+          <div class="wf-icon">🤖</div>
+          <div class="wf-label">Claude liest PDF aus</div>
+          <div class="wf-sub">Betrag, Datum, Lieferant</div>
+        </div>
+      </div>
+      <div class="wf-arrow">→</div>
+      <div class="wf-step">
+        <div class="wf-box wf-output">
+          <div class="wf-icon">📊</div>
+          <div class="wf-label">Neuer Eintrag in Excel</div>
+          <div class="wf-sub">Eingangsrechnungen 2025</div>
+        </div>
+      </div>
+      <div class="wf-arrow">→</div>
+      <div class="wf-step">
+        <div class="wf-box wf-output">
+          <div class="wf-icon">✅</div>
+          <div class="wf-label">Buchhaltung informiert</div>
+          <div class="wf-sub">kurze Benachrichtigung</div>
+        </div>
+      </div>
+    </div>
+    <div class="cols-2">
+      <div>
+        <div class="section-label n8n">Was Claude aus der Rechnung liest</div>
+        <ul class="icon-list" style="margin-top:8px;">
+          <li><span class="ico n8n-ico">🏢</span><span>Lieferantenname und Adresse</span></li>
+          <li><span class="ico n8n-ico">💰</span><span>Rechnungsbetrag (netto / brutto / MwSt.)</span></li>
+          <li><span class="ico n8n-ico">📅</span><span>Rechnungsdatum und Fälligkeitsdatum</span></li>
+          <li><span class="ico n8n-ico">🔢</span><span>Rechnungsnummer und Kostenstelle</span></li>
+        </ul>
+        <div class="highlight n8n" style="margin-top:10px; font-size:12px;">Funktioniert mit den meisten PDF-Rechnungsformaten — auch handschriftliche oder gescannte Belege (OCR).</div>
+      </div>
+      <div>
+        <div class="section-label n8n">Ergebnis für die Buchhaltung</div>
+        <div class="card card-n8n" style="margin-top:8px;">
+          <h3>Kein manuelles Abtippen mehr</h3>
+          <p style="font-size:12px;">Statt jede Rechnung einzeln zu öffnen und Daten in Excel einzutragen, kommt alles automatisch. Die Buchhaltung prüft nur noch — tippt nichts mehr ab.</p>
+        </div>
+        <div class="highlight pro" style="margin-top:8px; font-size:12px;">⭐ Für diesen Workflow: Claude Pro-Plan (API) + n8n Cloud oder selbst gehostet + Cowork für die Excel-Datei.</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer n8n-footer"></div>
+  <div class="slide-footer-bar">
+    <span>GRUNDSTEIN BAU GMBH · LINZ</span>
+    <span>Block 6 · n8n Workflow 4 — Rechnungsverarbeitung</span>
   </div>
 </div>
 
 <script>
-const total = 13;
+const total = 16;
 function goTo(n) {
   document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
   document.getElementById('slide' + n).classList.add('active');
-  document.getElementById('btn' + n).classList.add('active');
+  const btn = document.getElementById('btn' + n);
+  if (btn) btn.classList.add('active');
 }
 window.addEventListener('message', function(e) {
-  
   const active = document.querySelector('.slide.active');
   const idx = active ? parseInt(active.id.replace('slide','')) : 0;
   if (e.data === 'next' || e.data?.type === 'next') {
